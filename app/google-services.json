@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "797040376029",
+    "project_id": "holy-seat",
+    "storage_bucket": "holy-seat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:797040376029:android:1693f987ffaff516bbc334",
+        "android_client_info": {
+          "package_name": "com.mobdeve.s15.holyseat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "797040376029-0fnr55vgktlenm5ivp4o3p54ifpuv23b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHFeIx753IlUXJ85Pt5w7-Fp1roY5E-VA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "797040376029-0fnr55vgktlenm5ivp4o3p54ifpuv23b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
