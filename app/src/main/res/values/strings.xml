@@ -1,5 +1,23 @@
 <resources>
     <string name="app_name">Holy Seat</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="review_label">Reviews</string>
+    <string name="check_in_label">Check-ins</string>
+    <string name="edit_profile_button">Edit Profile</string>
+    <string name="recent_activities">Recent Activities</string>
+    <string name="room_type">Room Type: </string>
+    <string name="toilet_type">Toilet Type: </string>
+    <string name="check_in_button">Check-in</string>
+    <string name="add_review_button">Add Review</string>
+    <string name="rating">Rating:</string>
+    <string name="reviewer">Reviewer:</string>
+    <string name="edit_review">Edit Review</string>
+    <string name="delete_review">Delete Review</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
+    <string name="delete">Delete</string>
+    <string name="log_out">Log out</string>
+    <string name="check_in">checked in at</string>
+    <string name="reviewed">reviewed</string>
 </resources>
