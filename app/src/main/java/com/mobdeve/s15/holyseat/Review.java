@@ -1,0 +1,4 @@
+package com.mobdeve.s15.holyseat;
+
+public class Review {
+}
