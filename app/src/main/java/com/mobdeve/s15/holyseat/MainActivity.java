@@ -37,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
 
-        drawerLayout = findViewById(R.id.drawerLayout);
-        navView = findViewById(R.id.navView);
-        menuToolbar = findViewById(R.id.menuToolbar);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        navView = (NavigationView) findViewById(R.id.navView);
+        menuToolbar = (Toolbar) findViewById(R.id.menuToolbar);
 
         setSupportActionBar(menuToolbar);
         getSupportActionBar().setTitle(null);
@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case R.id.nav_logout:
+                        Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent2);
+                        finish();
                         break;
                 }
 

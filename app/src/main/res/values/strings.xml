@@ -22,4 +22,17 @@
     <string name="reviewed">reviewed</string>
     <string name="navDrawerOpen">Open Navigation Drawer</string>
     <string name="navDrawerClose">Close Navigation Drawer</string>
+    <string name="register_label">Create an account</string>
+    <string name="login_label">Welcome back!</string>
+    <string name="email_label">Email</string>
+    <string name="name_label">Display Name</string>
+    <string name="username_label">Username</string>
+    <string name="password_label">Password</string>
+    <string name="confirm_password_label">Confirm Password</string>
+    <string name="has_account1">Already have an account?</string>
+    <string name="has_account2"><u>Log in here.</u></string>
+    <string name="no_account1">Don\'t have an account?</string>
+    <string name="no_account2"><u>Register here.</u></string>
+    <string name="register_btn">Register</string>
+    <string name="login_btn">Log In</string>
 </resources>
