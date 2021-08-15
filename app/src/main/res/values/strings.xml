@@ -20,4 +20,6 @@
     <string name="log_out">Log out</string>
     <string name="check_in">checked in at</string>
     <string name="reviewed">reviewed</string>
+    <string name="navDrawerOpen">Open Navigation Drawer</string>
+    <string name="navDrawerClose">Close Navigation Drawer</string>
 </resources>
