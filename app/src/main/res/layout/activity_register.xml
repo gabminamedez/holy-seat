@@ -35,12 +35,10 @@
             app:layout_constraintTop_toBottomOf="@id/toiletLogo" />
 
         <TextView
-            android:id="@+id/registerLabel"
+            android:id="@+id/profileEditLabel2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="170dp"
             android:fontFamily="@font/rambla_bold"
             android:text="@string/register_label"
             android:textColor="@color/midnight"
@@ -63,7 +61,7 @@
             app:hintTextColor="@color/midnight"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/registerLabel">
+            app:layout_constraintTop_toBottomOf="@id/profileEditLabel2">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -181,8 +179,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/midnight"
-            android:fontFamily="@font/lato"
+            android:backgroundTint="@color/cerulean"
+            android:fontFamily="@font/rambla_bold"
             android:text="@string/register_btn"
             android:textColor="@color/off_white"
             app:layout_constraintEnd_toEndOf="parent"

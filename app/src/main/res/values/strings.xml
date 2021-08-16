@@ -35,4 +35,9 @@
     <string name="no_account2"><u>Register here.</u></string>
     <string name="register_btn">Register</string>
     <string name="login_btn">Log In</string>
+    <string name="profile_edit_label1">Edit Profile Information</string>
+    <string name="profile_edit_label2">Edit Password</string>
+    <string name="rating_label">Rating</string>
+    <string name="review_details_label">Review Details (Optional)</string>
+    <string name="image_label">Image (Optional)</string>
 </resources>
