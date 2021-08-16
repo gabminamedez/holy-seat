@@ -33,8 +33,10 @@
         android:id="@+id/profileLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="30dp"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/toolbar2">
+        app:layout_constraintTop_toBottomOf="@id/toolbar2"
+        tools:layout_editor_absoluteX="10dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -47,18 +49,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/rambla_bold"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/profileUser"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/rambla_bold"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textSize="18sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -66,7 +71,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/textView20"
@@ -74,7 +80,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/lato"
-                    android:text="@string/review_label" />
+                    android:text="@string/review_label"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -88,23 +95,28 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/lato"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/textView6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/lato"
-                    android:text="@string/check_in_label" />
+                    android:text="@string/check_in_label"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <Button
                 android:id="@+id/btnEditProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:backgroundTint="@color/cerulean"
                 android:fontFamily="@font/rambla_bold"
                 android:text="@string/edit_profile_button"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <ImageView
@@ -119,6 +131,7 @@
         android:id="@+id/divider"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
+        android:layout_marginTop="10dp"
         android:background="@color/charcoal"
         app:layout_constraintBottom_toTopOf="@id/activityLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -141,8 +154,11 @@
                 android:id="@+id/textView7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
                 android:fontFamily="@font/rambla_bold"
-                android:text="@string/recent_activities" />
+                android:text="@string/recent_activities"
+                android:textSize="18sp" />
 
             <Spinner
                 android:id="@+id/spinner"

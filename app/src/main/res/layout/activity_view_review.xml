@@ -44,11 +44,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="15dp"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -56,37 +58,50 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/rambla_bold"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/textView16"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:fontFamily="@font/lato"
-                    android:text="@string/rating" />
+                    android:text="@string/rating"
+                    android:textSize="16sp" />
 
                 <RatingBar
                     android:id="@+id/ratingBar"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:numStars="5"
+                    android:progressBackgroundTint="@color/grey"
+                    android:progressTint="@color/cerulean"
+                    android:rating="3.5"
+                    android:stepSize="1" />
 
                 <TextView
                     android:id="@+id/textView17"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:fontFamily="@font/lato"
-                    android:text="@string/reviewer" />
+                    android:text="@string/reviewer"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/reviewReviewer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/rambla_bold"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
@@ -94,17 +109,21 @@
                     android:id="@+id/btnEditReview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/cerulean"
+                    android:fontFamily="@font/rambla_bold"
                     android:text="@string/edit_review"
                     android:textAllCaps="false"
-                    android:fontFamily="@font/rambla_bold" />
+                    android:textSize="14sp" />
 
                 <Button
                     android:id="@+id/btnDeleteReview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/cerulean"
                     android:fontFamily="@font/rambla_bold"
                     android:text="@string/delete_review"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="false"
+                    android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -112,8 +131,11 @@
             android:id="@+id/reviewDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/lato"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textSize="14sp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

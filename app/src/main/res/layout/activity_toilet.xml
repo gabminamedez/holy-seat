@@ -50,6 +50,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -57,11 +58,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/rambla_bold"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="20sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -69,7 +72,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato"
-                        android:text="@string/room_type" />
+                        android:text="@string/room_type"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/roomType"
@@ -77,7 +81,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -90,7 +95,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato"
-                        android:text="@string/toilet_type" />
+                        android:text="@string/toilet_type"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/toiletType"
@@ -98,12 +104,14 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -112,7 +120,17 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
+
+                    <RatingBar
+                        android:id="@+id/toiletRatingIcon"
+                        style="@style/Widget.AppCompat.RatingBar.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:numStars="1"
+                        android:progressTint="@color/cerulean"
+                        android:rating="1" />
 
                     <TextView
                         android:id="@+id/toiletReviews"
@@ -120,7 +138,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/textView22"
@@ -128,7 +147,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="@string/review_label" />
+                        android:text="@string/review_label"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -141,14 +161,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/textView25"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato"
-                        android:text="@string/check_in_label" />
+                        android:text="@string/check_in_label"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -156,23 +178,30 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:orientation="vertical">
 
                 <Button
                     android:id="@+id/btnCheckIn"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/cerulean"
                     android:fontFamily="@font/rambla_bold"
                     android:text="@string/check_in_button"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="false"
+                    android:textSize="14sp" />
 
                 <Button
                     android:id="@+id/btnAddReview"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/cerulean"
                     android:fontFamily="@font/rambla_bold"
                     android:text="@string/add_review_button"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="false"
+                    android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -180,8 +209,10 @@
             android:id="@+id/textView14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/rambla_bold"
-            android:text="@string/review_label" />
+            android:text="@string/review_label"
+            android:textSize="18sp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerReviews"

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="15dp"
+    android:layout_marginTop="15dp"
+    android:layout_marginEnd="15dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -14,40 +17,55 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/rambla_bold"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
             android:fontFamily="@font/lato"
-            android:text="@string/reviewed" />
+            android:text="@string/reviewed"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/profileReviewToilet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/rambla_bold"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textSize="16sp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <RatingBar
             android:id="@+id/profileReviewRating"
+            style="@style/Widget.AppCompat.RatingBar.Small"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginEnd="5dp"
+            android:numStars="5"
+            android:progressBackgroundTint="@color/grey"
+            android:progressTint="@color/cerulean"
+            android:rating="3.5"
+            android:stepSize="1" />
 
         <TextView
             android:id="@+id/profileReviewDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -56,7 +74,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/lato"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textSize="16sp" />
 
 </LinearLayout>

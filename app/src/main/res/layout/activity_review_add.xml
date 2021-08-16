@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:numStars="5"
-            android:progressBackgroundTint="#909090"
+            android:progressBackgroundTint="@color/grey"
             android:progressTint="@color/cerulean"
             android:rating="0"
             android:scaleX="0.7"
