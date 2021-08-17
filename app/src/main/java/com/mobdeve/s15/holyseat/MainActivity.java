@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -15,7 +17,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,10 +33,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 
 import java.util.Date;
 
@@ -43,10 +51,12 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private Toolbar menuToolbar;
-    private MapView mapView;
+    private Switch fragmentSwitch;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    private Boolean isMapView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +95,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mapView = (MapView) findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
+        switchFragment(savedInstanceState);
+
+        fragmentSwitch = (Switch) findViewById(R.id.fragmentSwitch);
+        fragmentSwitch.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/streets-v10"));
+            public void onClick(View view) {
+                isMapView = fragmentSwitch.isChecked();
+                switchFragment(savedInstanceState);
             }
         });
     }
@@ -98,45 +110,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mapView.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         //update UI
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mapView.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mapView.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mapView.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
     }
 
     @Override
@@ -146,6 +121,47 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             super.onBackPressed();
+        }
+    }
+
+    public void switchFragment(Bundle savedInstanceState) {
+        if(isMapView) {
+            ((Switch) findViewById(R.id.fragmentSwitch)).setText("Map View");
+            SupportMapFragment mapFragment;
+            if(savedInstanceState == null) {
+                final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                MapboxMapOptions options = MapboxMapOptions.createFromAttributes(this, null);
+                options.camera(new CameraPosition.Builder()
+                        .target(new LatLng(37.7749, -122.4194))
+                        .zoom(12)
+                        .build());
+
+                mapFragment = SupportMapFragment.newInstance(options);
+
+                transaction.add(R.id.fragmentHolder, mapFragment, "com.mapbox.map");
+                transaction.commit();
+            }
+            else {
+                mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentByTag("com.mapbox.map");
+            }
+
+            if(mapFragment != null) {
+                mapFragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(@NonNull MapboxMap mapboxMap) {
+                        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/streets-v10"));
+                    }
+                });
+            }
+        }
+        else {
+            ((Switch) findViewById(R.id.fragmentSwitch)).setText("List View");
+            ListFragment listFragment = new ListFragment();
+            FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction()
+                    .replace(R.id.fragmentHolder, listFragment, listFragment.getTag())
+                    .commit();
         }
     }
 
