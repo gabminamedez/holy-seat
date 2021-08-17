@@ -40,4 +40,5 @@
     <string name="rating_label">Rating</string>
     <string name="review_details_label">Review Details (Optional)</string>
     <string name="image_label">Image (Optional)</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiZ2FibWluYW1lZGV6IiwiYSI6ImNrc2U4MGhncjB1dWQycW80NDR5MGhrZXgifQ.5dexgQO85m0cSglz3WpGOA</string>
 </resources>
