@@ -33,7 +33,7 @@ public class ToiletListAdapter extends RecyclerView.Adapter<ToiletListAdapter.My
 
     @Override
     public void onBindViewHolder(@NonNull ToiletListAdapter.MyViewHolder holder, int position) {
-//        holder.bind(toilets.get(position));
+        holder.bindToilet(toilets.get(position));
     }
 
     @Override
@@ -42,12 +42,27 @@ public class ToiletListAdapter extends RecyclerView.Adapter<ToiletListAdapter.My
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        private ImageView profile;
-        private TextView displayName, username, date, tweetDetails, likes;
+        private ImageView toiletListImg;
+        private TextView toiletListName, toiletListRating, toiletListRoomType, toiletListToiletType, toiletListReviews, toiletListCheckins;
         public MyViewHolder(View itemView) {
             super(itemView);
+            this.toiletListImg = itemView.findViewById(R.id.toiletListImg);;
+            this.toiletListName = itemView.findViewById(R.id.toiletListName);
+            this.toiletListRating = itemView.findViewById(R.id.toiletListRating);
+            this.toiletListRoomType = itemView.findViewById(R.id.toiletListRoomType);
+            this.toiletListToiletType = itemView.findViewById(R.id.toiletListToiletType);
+            this.toiletListReviews = itemView.findViewById(R.id.toiletListReviews);
+            this.toiletListCheckins = itemView.findViewById(R.id.toiletListCheckins);
         }
         public void bindToilet(Toilet toilet) {
+//            this.toiletListImg.setImageResource(toilet.get);
+            this.toiletListName.setText(toilet.getLocation());
+            this.toiletListRating.setText(String.valueOf(toilet.getAvgRating()));
+            this.toiletListRoomType.setText(toilet.getRoomType());
+            this.toiletListToiletType.setText(toilet.getToiletType());
+            this.toiletListReviews.setText(String.valueOf(toilet.getNumReviews()));
+            this.toiletListCheckins.setText(String.valueOf(toilet.getNumCheckins()));
+
         }
     }
 }

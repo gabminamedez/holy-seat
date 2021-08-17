@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ToiletListAdapter toiletListAdapter;
-    private ArrayList<Toilet> toilets;
+    private ArrayList<Toilet> toilets = new ArrayList<>();;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-        toilets = new ArrayList<>();
         db.collection("Toilets").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -113,12 +112,16 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, document.getId() + " => " + document.getData());
                         toilets.add(document.toObject(Toilet.class));
                     }
+                    recyclerView = findViewById(R.id.toiletListRecycler);
+                    toiletListAdapter = new ToiletListAdapter(toilets);
+                    recyclerView.setAdapter(toiletListAdapter);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             }
         });
-
+        Log.d(TAG, "onCreate: " + toilets.size());
 //        recyclerView = findViewById(R.id.toiletListRecycler);
 //        toiletListAdapter = new ToiletListAdapter(toilets);
 //        recyclerView.setAdapter(toiletListAdapter);
