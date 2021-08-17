@@ -33,7 +33,7 @@ public class ToiletListAdapter extends RecyclerView.Adapter<ToiletListAdapter.My
 
     @Override
     public void onBindViewHolder(@NonNull ToiletListAdapter.MyViewHolder holder, int position) {
-//        holder.bind(data.get(position));
+//        holder.bind(toilets.get(position));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ToiletListAdapter extends RecyclerView.Adapter<ToiletListAdapter.My
         public MyViewHolder(View itemView) {
             super(itemView);
         }
-        public void bindToilet(Toilet review) {
+        public void bindToilet(Toilet toilet) {
         }
     }
 }

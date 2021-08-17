@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,8 +29,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -42,6 +46,8 @@ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navView;
     private Toolbar menuToolbar;
     private Switch fragmentSwitch;
+
+    private RecyclerView recyclerView;
+    private ToiletListAdapter toiletListAdapter;
+    private ArrayList<Toilet> toilets;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -94,6 +104,25 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        toilets = new ArrayList<>();
+        db.collection("Toilets").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        toilets.add(document.toObject(Toilet.class));
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
+//        recyclerView = findViewById(R.id.toiletListRecycler);
+//        toiletListAdapter = new ToiletListAdapter(toilets);
+//        recyclerView.setAdapter(toiletListAdapter);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         switchFragment(savedInstanceState);
 
@@ -163,6 +192,8 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.fragmentHolder, listFragment, listFragment.getTag())
                     .commit();
         }
+        for (int i = 0; i < toilets.size(); i++)
+            Log.d(TAG, "onCreate: " + toilets.get(i).toString());
     }
 
 }
