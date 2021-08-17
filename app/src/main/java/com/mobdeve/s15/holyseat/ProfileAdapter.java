@@ -23,14 +23,16 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.MyViewHo
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_profile, parent, false);
-        MyViewHolder myViewHolder = new MyViewHolder(itemView);
-        myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        View itemView1 = LayoutInflater.from(parent.getContext()).inflate(R.layout.profilecheckin_layout, parent, false);
+        View itemView2 = LayoutInflater.from(parent.getContext()).inflate(R.layout.profilereview_layout, parent, false);
+        MyViewHolder myViewHolder1 = new MyViewHolder(itemView1);
+        MyViewHolder myViewHolder2 = new MyViewHolder(itemView2);
+        myViewHolder1.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             }
         });
-        return myViewHolder;
+        return myViewHolder1;
     }
 
     @Override

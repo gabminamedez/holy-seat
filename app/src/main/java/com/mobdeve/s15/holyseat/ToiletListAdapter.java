@@ -11,17 +11,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHolder>{
-    private ArrayList<Review> reviews;
-    public ReviewAdapter(ArrayList<Review> reviews) {
-        this.reviews = reviews;
+
+public class ToiletListAdapter extends RecyclerView.Adapter<ToiletListAdapter.MyViewHolder> {
+    private ArrayList<Toilet> toilets;
+    public ToiletListAdapter(ArrayList<Toilet> toilets) {
+        this.toilets = toilets;
     }
 
     @NonNull
     @Override
-    public ReviewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.toiletreview_layout, parent, false);
-        ReviewAdapter.MyViewHolder myViewHolder = new ReviewAdapter.MyViewHolder(itemView);
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.toiletlist_layout, parent, false);
+        MyViewHolder myViewHolder = new MyViewHolder(itemView);
         myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -31,13 +32,13 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ReviewAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ToiletListAdapter.MyViewHolder holder, int position) {
 //        holder.bind(data.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return reviews.size();
+        return toilets.size();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -46,7 +47,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
         public MyViewHolder(View itemView) {
             super(itemView);
         }
-        public void bind(Review review) {
+        public void bindToilet(Toilet review) {
         }
     }
 }

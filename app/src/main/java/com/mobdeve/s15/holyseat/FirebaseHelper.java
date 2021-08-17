@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,13 @@ import java.util.Map;
 public class FirebaseHelper {
 
     public static final String TAG = "FirebaseHelper";
+
+    public static final String
+        USER_COLLECTION = "Users",
+        TOILET_COLLECTION = "Toilets",
+        REVIEW_COLLECTION = "Reviews",
+        UPVOTE_COLLECTION = "Upvotes",
+        CHECKIN_COLLECTION = "Check Ins";
 
     public static void addReview(FirebaseFirestore db, String userID, String toiletID, int rating, String reviewDetails) {
         Map<String, Object> review = new HashMap<>();
