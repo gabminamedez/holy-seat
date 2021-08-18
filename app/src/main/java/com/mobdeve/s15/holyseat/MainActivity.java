@@ -104,28 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-        db.collection("Toilets").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(TAG, document.getId() + " => " + document.getData());
-                        toilets.add(document.toObject(Toilet.class));
-                    }
-                    recyclerView = findViewById(R.id.toiletListRecycler);
-                    toiletListAdapter = new ToiletListAdapter(toilets);
-                    recyclerView.setAdapter(toiletListAdapter);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
-        Log.d(TAG, "onCreate: " + toilets.size());
-//        recyclerView = findViewById(R.id.toiletListRecycler);
-//        toiletListAdapter = new ToiletListAdapter(toilets);
-//        recyclerView.setAdapter(toiletListAdapter);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         switchFragment(savedInstanceState);
 
@@ -157,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void switchFragment(Bundle savedInstanceState) {
+        retrieveToilets();
+
         if(isMapView) {
             ((Switch) findViewById(R.id.fragmentSwitch)).setText("Map View");
             SupportMapFragment mapFragment;
@@ -197,6 +177,28 @@ public class MainActivity extends AppCompatActivity {
         }
         for (int i = 0; i < toilets.size(); i++)
             Log.d(TAG, "onCreate: " + toilets.get(i).toString());
+    }
+
+    public void retrieveToilets() {
+        toilets.clear();
+        db.collection("Toilets").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        toilets.add(document.toObject(Toilet.class));
+                    }
+                    recyclerView = findViewById(R.id.toiletListRecycler);
+                    toiletListAdapter = new ToiletListAdapter(toilets);
+                    recyclerView.setAdapter(toiletListAdapter);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+        Log.d(TAG, "onCreate: " + toilets.size());
     }
 
 }
