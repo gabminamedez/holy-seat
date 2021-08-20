@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
                 MapboxMapOptions options = MapboxMapOptions.createFromAttributes(this, null);
                 options.camera(new CameraPosition.Builder()
-                        .target(new LatLng(37.7749, -122.4194))
+                        .target(new LatLng(14.594, 121.006))
                         .zoom(12)
                         .build());
 
@@ -198,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        Log.d(TAG, "onCreate: " + toilets.size());
     }
 
 }

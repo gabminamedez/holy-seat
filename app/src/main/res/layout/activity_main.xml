@@ -14,20 +14,21 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:visibility="visible"
         app:headerLayout="@layout/menu_header"
         app:menu="@menu/navmenu" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutContent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/off_white">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/menuToolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/midnight"
+            android:backgroundTint="@color/midnight"
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/Theme.HolySeat"
             app:layout_constraintEnd_toEndOf="parent"
@@ -48,31 +49,60 @@
             app:layout_constraintStart_toStartOf="@id/menuToolbar"
             app:layout_constraintTop_toTopOf="@id/menuToolbar" />
 
-        <Switch
-            android:id="@+id/fragmentSwitch"
+        <LinearLayout
+            android:id="@+id/controls"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/lato"
-            android:minHeight="48dp"
-            android:text="Switch"
-            android:textColorLink="@color/cerulean"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/menuToolbar" />
+            app:layout_constraintTop_toBottomOf="@id/menuToolbar">
+
+            <Switch
+                android:id="@+id/fragmentSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:minHeight="48dp"
+                android:text="Switch"
+                android:textColorLink="@color/cerulean" />
+
+            <ImageButton
+                android:id="@+id/filterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/off_white"
+                app:srcCompat="@drawable/ic_baseline_filter_alt_24" />
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/fragmentHolder"
             android:layout_width="0dp"
-            android:layout_height="500dp"
+            android:layout_height="0dp"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragmentSwitch">
+            app:layout_constraintTop_toBottomOf="@id/controls">
 
         </FrameLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            app:backgroundTint="@color/cerulean"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/toilet" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
