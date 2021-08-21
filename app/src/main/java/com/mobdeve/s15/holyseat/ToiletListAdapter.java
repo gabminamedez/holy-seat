@@ -1,5 +1,6 @@
 package com.mobdeve.s15.holyseat;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,26 +15,32 @@ import java.util.ArrayList;
 
 public class ToiletListAdapter extends RecyclerView.Adapter<ToiletListAdapter.MyViewHolder> {
     private ArrayList<Toilet> toilets;
-    public ToiletListAdapter(ArrayList<Toilet> toilets) {
-        this.toilets = toilets;
+    public ToiletListAdapter() {
+        this.toilets = new ArrayList<>();
     }
 
-    @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.toiletlist_layout, parent, false);
         MyViewHolder myViewHolder = new MyViewHolder(itemView);
-        myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
         return myViewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ToiletListAdapter.MyViewHolder holder, int position) {
         holder.bindToilet(toilets.get(position));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(view.getContext(), ToiletActivity.class);
+                i.putExtra(ToiletActivity.TOILET_KEY, toilets.get(holder.getBindingAdapterPosition()).getId());
+                view.getContext().startActivity(i);
+            }
+        });
+    }
+
+    public void setToilets(ArrayList<Toilet> toilets){
+        this.toilets = toilets;
     }
 
     @Override

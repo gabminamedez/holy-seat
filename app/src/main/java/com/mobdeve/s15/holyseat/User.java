@@ -1,13 +1,13 @@
 package com.mobdeve.s15.holyseat;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
+import java.util.Date;
 
 public class User {
 
     private @DocumentId String id;
-    private @ServerTimestamp Timestamp created;
+    private @ServerTimestamp Date created;
     private String displayName;
     private String email;
     private long numReviews;
@@ -25,11 +25,11 @@ public class User {
         this.id = id;
     }
 
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 

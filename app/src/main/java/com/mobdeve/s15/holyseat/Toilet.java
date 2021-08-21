@@ -1,18 +1,18 @@
 package com.mobdeve.s15.holyseat;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ServerTimestamp;
+import java.util.Date;
 
 public class Toilet {
 
     private @DocumentId String id;
-    private long avgRating;
+    private double avgRating;
     private GeoPoint coordinates;
     private String image;
-    private @ServerTimestamp Timestamp created;
+    private @ServerTimestamp Date created;
     private String location;
     private long numCheckins;
     private long numReviews;
@@ -47,11 +47,11 @@ public class Toilet {
         this.id = id;
     }
 
-    public long getAvgRating() {
+    public double getAvgRating() {
         return avgRating;
     }
 
-    public void setAvgRating(long avgRating) {
+    public void setAvgRating(double avgRating) {
         this.avgRating = avgRating;
     }
 
@@ -71,11 +71,11 @@ public class Toilet {
         this.image = image;
     }
 
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
@@ -119,16 +119,4 @@ public class Toilet {
         this.toiletType = toiletType;
     }
 
-    public Toilet(String id, long avgRating, GeoPoint coordinates, String image, Timestamp created, String location, long numCheckins, long numReviews, String roomType, String toiletType) {
-        this.id = id;
-        this.avgRating = avgRating;
-        this.coordinates = coordinates;
-        this.image = image;
-        this.created = created;
-        this.location = location;
-        this.numCheckins = numCheckins;
-        this.numReviews = numReviews;
-        this.roomType = roomType;
-        this.toiletType = toiletType;
-    }
 }

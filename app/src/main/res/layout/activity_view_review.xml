@@ -59,6 +59,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/rambla_bold"
                     android:text="TextView"
+                    android:textColor="@color/midnight"
                     android:textSize="20sp" />
 
                 <TextView
@@ -71,7 +72,7 @@
                     android:textSize="16sp" />
 
                 <RatingBar
-                    android:id="@+id/ratingBar"
+                    android:id="@+id/reviewRating"
                     style="@style/Widget.AppCompat.RatingBar.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -95,9 +96,28 @@
                     android:id="@+id/reviewReviewer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
                     android:fontFamily="@font/rambla_bold"
                     android:text="TextView"
+                    android:textColor="@color/black"
                     android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/lato"
+                    android:text="@string/date_posted"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/reviewDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:text="TextView"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -119,7 +139,7 @@
                     android:id="@+id/btnDeleteReview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/cerulean"
+                    android:backgroundTint="@color/red"
                     android:fontFamily="@font/rambla_bold"
                     android:text="@string/delete_review"
                     android:textAllCaps="false"

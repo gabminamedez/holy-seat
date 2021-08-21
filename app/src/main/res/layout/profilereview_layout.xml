@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/rambla_bold"
             android:text="TextView"
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
         <TextView
@@ -36,6 +37,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/rambla_bold"
             android:text="TextView"
+            android:textColor="@color/midnight"
             android:textSize="16sp" />
 
     </LinearLayout>

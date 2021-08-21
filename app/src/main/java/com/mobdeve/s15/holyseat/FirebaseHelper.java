@@ -38,7 +38,7 @@ public class FirebaseHelper {
         review.put("rating", rating);
         review.put("reviewDetails", reviewDetails);
         review.put("numUpvotes", 0);
-        review.put("posted", new Timestamp(new Date()));
+        review.put("posted", FieldValue.serverTimestamp());
         db.collection("Reviews")
                 .add(review)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -112,7 +112,7 @@ public class FirebaseHelper {
             .update("rating", rating,
                     "reviewDetails", reviewDetails,
                     "numUpvotes", 0,
-                    "posted", new Timestamp(new Date()))
+                    "posted", FieldValue.serverTimestamp())
             .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
@@ -207,7 +207,7 @@ public class FirebaseHelper {
         user.put("password", password);
         user.put("numReviews", 0);
 
-        user.put("created", new Timestamp(new Date()));
+        user.put("created", FieldValue.serverTimestamp());
         db.collection("Users")
                 .add(user)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -265,7 +265,7 @@ public class FirebaseHelper {
         Map<String, Object> checkin = new HashMap<>();
         checkin.put("userID", db.document("Users/" + userID));
         checkin.put("toiletID", db.document("Toilets/" + toiletID));
-        checkin.put("checked", new Timestamp(new Date()));
+        checkin.put("checked", FieldValue.serverTimestamp());
         db.collection("Check Ins")
                 .add(checkin)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

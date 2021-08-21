@@ -5,18 +5,41 @@ import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.ServerTimestamp;
 
-public class Review {
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
+public class Review extends Activity{
 
     private @DocumentId String id;
     private String details;
     private long numUpvotes;
-    private @ServerTimestamp Timestamp posted;
+    private @ServerTimestamp Date posted;
     private long rating;
     private DocumentReference reviewerID;
+    private String reviewerName;
     private DocumentReference toiletID;
+    private String toiletLocation;
 
     public Review(){
 
+    }
+
+    public String getReviewerName() {
+        return reviewerName;
+    }
+
+    public void setReviewerName(String reviewerName) {
+        this.reviewerName = reviewerName;
+    }
+
+    public String getToiletLocation() {
+        return toiletLocation;
+    }
+
+    public void setToiletLocation(String toiletLocation) {
+        this.toiletLocation = toiletLocation;
     }
 
     public String getId() {
@@ -43,11 +66,19 @@ public class Review {
         this.numUpvotes = numUpvotes;
     }
 
-    public Timestamp getPosted() {
+    public Date getPosted() {
+        return posted;
+    }
+    public String getPostedString(){
+        DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        df.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        return df.format(posted);
+    }
+    public Date getDate() {
         return posted;
     }
 
-    public void setPosted(Timestamp posted) {
+    public void setPosted(Date posted) {
         this.posted = posted;
     }
 

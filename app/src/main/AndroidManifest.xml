@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HolySeat">
         <activity
+            android:name=".ReviewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ToiletActivity"
+            android:exported="true" />
+        <activity
             android:name=".ReviewEditActivity"
             android:exported="true" />
         <activity

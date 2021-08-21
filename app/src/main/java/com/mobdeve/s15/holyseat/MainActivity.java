@@ -77,9 +77,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MapboxMap globalMap;
     private Style globalStyle;
 
-    private RecyclerView recyclerView;
-    private ToiletListAdapter toiletListAdapter;
-    private ArrayList<Toilet> toilets = new ArrayList<>();;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -152,8 +149,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public void switchFragment(Bundle savedInstanceState) {
-        retrieveToilets();
+        public void switchFragment(Bundle savedInstanceState) {
 
         if(isMapView) {
             ((Switch) findViewById(R.id.fragmentSwitch)).setText("Map View");
@@ -226,36 +222,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         else {
+//            retrieveToilets();
             ((Switch) findViewById(R.id.fragmentSwitch)).setText("List View");
             ListFragment listFragment = new ListFragment();
             FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction()
                     .replace(R.id.fragmentHolder, listFragment, listFragment.getTag())
                     .commit();
-        }
-        for (int i = 0; i < toilets.size(); i++)
-            Log.d(TAG, "onCreate: " + toilets.get(i).toString());
-    }
 
-    public void retrieveToilets() {
-        toilets.clear();
-        db.collection("Toilets").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(TAG, document.getId() + " => " + document.getData());
-                        toilets.add(document.toObject(Toilet.class));
-                    }
-                    recyclerView = findViewById(R.id.toiletListRecycler);
-                    toiletListAdapter = new ToiletListAdapter(toilets);
-                    recyclerView.setAdapter(toiletListAdapter);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
+        }
     }
 
     @SuppressWarnings( {"MissingPermission"})
