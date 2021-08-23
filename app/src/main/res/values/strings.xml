@@ -48,4 +48,12 @@
     <string name="edit_review_prompt1">Are you sure you want to edit this review?</string>
     <string name="edit_review_prompt2">Your upvotes obtained will be reset.</string>
     <string name="edit_profile_prompt">Are you sure you want to apply these changes?</string>
+    <string name="error_email">Invalid email.</string>
+    <string name="error_email_exist">This email has already been registered.</string>
+    <string name="error_display">Display name must be alphabetic characters only.</string>
+    <string name="error_user">Username must contain at least 6 characters.</string>
+    <string name="error_user_unique">Username must be unique.</string>
+    <string name="error_pass1">Password must have at least 8 characters.</string>
+    <string name="error_pass2">Passwords don"'"t match.</string>
+    <string name="error_login">Invalid email and/or password.</string>
 </resources>

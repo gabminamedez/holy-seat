@@ -75,6 +75,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
 
         Intent i = getIntent();
         String profileRefString = i.getStringExtra(PROFILE_KEY);
+        System.out.println(profileRefString);
 
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -105,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                         User user = document.toObject(User.class);
 //                        profileImg
                         profileName.setText(user.getDisplayName());
-                        profileUser.setText(user.getUsername());
+                        profileUser.setText("@" + user.getUsername());
                         profileReviews.setText(String.valueOf(user.getNumReviews()));
 //                        profileCheckins.setText();
                         Log.d(TAG, "onComplete: done loading");
