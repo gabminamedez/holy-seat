@@ -47,132 +47,188 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/registerTitle" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/emailRegisterInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/registerForm"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/email_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profileEditLabel2">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailRegisterInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/email_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/registerEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
                 android:fontFamily="@font/lato"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:text="@string/error_email"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/nameRegisterInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/name_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailRegisterInput">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nameRegisterInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/name_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/registerDisplayName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
                 android:fontFamily="@font/lato"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:text="@string/error_display"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/usernameRegisterInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/username_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nameRegisterInput">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/usernameRegisterInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/username_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/registerUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
                 android:fontFamily="@font/lato"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:text="@string/error_user"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/passwordRegisterInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/password_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/usernameRegisterInput">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordRegisterInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/password_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/registerPass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorPass1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
                 android:fontFamily="@font/lato"
-                android:inputType="textPassword"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:text="@string/error_pass1"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/password2RegisterInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/confirm_password_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/passwordRegisterInput">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/password2RegisterInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/lato"
-                android:inputType="textPassword"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/confirm_password_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/registerConfirmPass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorPass2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:fontFamily="@font/lato"
+                android:text="@string/error_pass2"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/registerButton"
@@ -185,7 +241,7 @@
             android:textColor="@color/off_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password2RegisterInput" />
+            app:layout_constraintTop_toBottomOf="@id/registerForm" />
 
         <TextView
             android:id="@+id/hasAccount1"
@@ -211,7 +267,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/hasAccount1" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,4 +15,5 @@
     <color name="alabaster">#F7F4EA</color>
     <color name="grey">#909090</color>
     <color name="red">#FF7557</color>
+    <color name="error_red">#BF2A22</color>
 </resources>

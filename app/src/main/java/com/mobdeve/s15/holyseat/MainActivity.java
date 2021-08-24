@@ -18,9 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MapboxMap globalMap;
     private Style globalStyle;
 
-
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -86,9 +87,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() == null){
+            Log.d(TAG, "onCreate: NO USER");
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else
+            Log.d(TAG, "onCreate: MAY USER " + mAuth.getCurrentUser().toString());
+        
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
-        mAuth = FirebaseAuth.getInstance();
+
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         navView = (NavigationView) findViewById(R.id.navView);
@@ -100,15 +112,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, menuToolbar, R.string.navDrawerOpen, R.string.navDrawerClose);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        Intent i = getIntent();
+        String profileRefString = i.getStringExtra(ProfileActivity.PROFILE_KEY);
+
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_profile:
                         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                        intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
                         startActivity(intent);
                         break;
                     case R.id.nav_logout:
+                        mAuth.signOut();
                         Intent intent2 = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(intent2);
                         finish();
@@ -222,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         else {
-//            retrieveToilets();
             ((Switch) findViewById(R.id.fragmentSwitch)).setText("List View");
             ListFragment listFragment = new ListFragment();
             FragmentManager manager = getSupportFragmentManager();
