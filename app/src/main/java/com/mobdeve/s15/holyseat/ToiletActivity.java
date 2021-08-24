@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ public class ToiletActivity extends AppCompatActivity {
     public final String TAG = "ToiletActivity";
     public static String TOILET_KEY = "TOILET_KEY";
 
+    private ImageButton backButton;
     private ImageView toiletImg;
     private TextView toiletName;
     private TextView roomType;
@@ -47,6 +49,7 @@ public class ToiletActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toilet);
 
+        this.backButton = findViewById(R.id.backButton);
         this.toiletImg = findViewById(R.id.toiletImg);
         this.toiletName = findViewById(R.id.toiletName);
         this.roomType = findViewById(R.id.roomType);
@@ -61,6 +64,13 @@ public class ToiletActivity extends AppCompatActivity {
         this.reviewAdapter = new ReviewAdapter();
         this.recyclerReviews.setAdapter(reviewAdapter);
         this.recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
+
+        backButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         btnAddReview.setOnClickListener(new View.OnClickListener(){
             @Override

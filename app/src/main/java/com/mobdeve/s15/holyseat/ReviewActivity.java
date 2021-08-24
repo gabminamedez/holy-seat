@@ -15,6 +15,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ public class ReviewActivity extends AppCompatActivity {
     private final String TAG = "ReviewActivity";
     public static String REVIEW_KEY = "REVIEW_KEY";
 
+    private ImageButton backButton;
     private ImageView reviewToiletImg;
     private TextView reviewToiletName;
     private TextView reviewReviewer;
@@ -45,6 +47,7 @@ public class ReviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_review);
 
+        this.backButton = findViewById(R.id.backButton);
         this.reviewToiletImg = findViewById(R.id.reviewToiletImg);
         this.reviewToiletName = findViewById(R.id.reviewToiletName);
         this.reviewRating = findViewById(R.id.reviewRating);
@@ -57,6 +60,13 @@ public class ReviewActivity extends AppCompatActivity {
         Intent i = getIntent();
         String reviewRefString = i.getStringExtra(REVIEW_KEY);
         String toiletRefString = i.getStringExtra(ToiletActivity.TOILET_KEY);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         this.reviewReviewer.setOnClickListener(new View.OnClickListener() {
             @Override

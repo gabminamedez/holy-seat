@@ -10,7 +10,8 @@ public class Toilet {
 
     private @DocumentId String id;
     private double avgRating;
-    private GeoPoint coordinates;
+    private double longitude;
+    private double latitude;
     private String image;
     private @ServerTimestamp Date created;
     private String location;
@@ -28,7 +29,8 @@ public class Toilet {
         return "Toilet{" +
                 "id='" + id + '\'' +
                 ", avgRating=" + avgRating +
-                ", coordinates=" + coordinates +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
                 ", image='" + image + '\'' +
                 ", created=" + created +
                 ", location='" + location + '\'' +
@@ -55,12 +57,20 @@ public class Toilet {
         this.avgRating = avgRating;
     }
 
-    public GeoPoint getCoordinates() {
-        return coordinates;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setCoordinates(GeoPoint coordinates) {
-        this.coordinates = coordinates;
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     public String getImage() {
