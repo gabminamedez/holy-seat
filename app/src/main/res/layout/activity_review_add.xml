@@ -109,6 +109,7 @@
             app:layout_constraintTop_toBottomOf="@id/ratingArea">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/addReviewDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
@@ -156,7 +157,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:id="@+id/editButton"
+            android:id="@+id/addButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

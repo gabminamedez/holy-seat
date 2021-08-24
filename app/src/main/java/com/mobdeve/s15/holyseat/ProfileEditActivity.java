@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.VideoView;
 
 public class ProfileEditActivity extends AppCompatActivity {
 
@@ -19,7 +18,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_edit);
 
-        editButton = (Button) findViewById(R.id.editButton);
+        editButton = (Button) findViewById(R.id.addButton);
         backButton = findViewById(R.id.backButton);
 
         editButton.setOnClickListener(new View.OnClickListener(){

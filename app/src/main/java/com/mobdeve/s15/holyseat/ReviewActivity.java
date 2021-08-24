@@ -3,28 +3,32 @@ package com.mobdeve.s15.holyseat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.service.autofill.FillEventHistory;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReviewActivity extends AppCompatActivity {
 
@@ -41,6 +45,9 @@ public class ReviewActivity extends AppCompatActivity {
     private Button btnEditReview;
     private Button btnDeleteReview;
 
+    private SharedPreferences sp;
+
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,10 @@ public class ReviewActivity extends AppCompatActivity {
         this.btnDeleteReview = findViewById(R.id.btnDeleteReview);
         this.reviewDate = findViewById(R.id.reviewDate);
 
+        db = FirebaseFirestore.getInstance();
+
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+
         Intent i = getIntent();
         String reviewRefString = i.getStringExtra(REVIEW_KEY);
         String toiletRefString = i.getStringExtra(ToiletActivity.TOILET_KEY);
@@ -68,19 +79,11 @@ public class ReviewActivity extends AppCompatActivity {
             }
         });
 
-        this.reviewReviewer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), ProfileActivity.class);
-                i.putExtra(ProfileActivity.PROFILE_KEY, reviewRefString);
-                v.getContext().startActivity(i);
-            }
-        });
-
         btnEditReview.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ReviewActivity.this, ReviewEditActivity.class);
+                intent.putExtra(REVIEW_KEY, reviewRefString);
                 startActivity(intent);
             }
         });
@@ -98,7 +101,7 @@ public class ReviewActivity extends AppCompatActivity {
                 //Initializing the views of the dialog.
                 dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 Button btnCancel = dialog.findViewById(R.id.btnCancel);
-                Button btnDelete = dialog.findViewById(R.id.btnDelete);
+                Button btnDelete = dialog.findViewById(R.id.btnAdd);
 
 
 
@@ -112,6 +115,51 @@ public class ReviewActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        db.collection("Users").document(sp.getString(ProfileActivity.PROFILE_KEY,"")).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                DocumentReference user = documentSnapshot.getReference();
+                                user.update("numReviews", FieldValue.increment(-1))
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "numReviews incremented.");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error updating document", e);
+                                            }
+                                        });
+                            }
+                        });
+                        db.collection("Toilets").document(toiletRefString).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                DocumentReference toilet = documentSnapshot.getReference();
+                                toilet.update("numReviews", FieldValue.increment(-1))
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "numReviews incremented.");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error updating document", e);
+                                            }
+                                        });
+                            }
+                        });
+                        db.collection("Reviews").document(reviewRefString).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.d(TAG, "onSuccess: Document deleted.");
+                                finish();
+                            }
+                        });
                     }
                 });
 

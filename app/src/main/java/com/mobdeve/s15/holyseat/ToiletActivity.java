@@ -43,6 +43,7 @@ public class ToiletActivity extends AppCompatActivity {
     private RecyclerView recyclerReviews;
     private ReviewAdapter reviewAdapter;
 
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,13 @@ public class ToiletActivity extends AppCompatActivity {
         this.recyclerReviews.setAdapter(reviewAdapter);
         this.recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
 
+        db = FirebaseFirestore.getInstance();
+
+        Intent i = getIntent();
+        String toiletRefString = i.getStringExtra(TOILET_KEY);
+
+        DocumentReference toiletRef = db.collection("Toilets").document(toiletRefString);
+
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -76,17 +84,67 @@ public class ToiletActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ToiletActivity.this, ReviewAddActivity.class);
+                intent.putExtra(ToiletActivity.TOILET_KEY, toiletRefString);
                 startActivity(intent);
             }
         });
+        toiletRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Toilet toilet = document.toObject(Toilet.class);
+//                        toiletImg
+                        toiletName.setText(toilet.getLocation());
+                        roomType.setText(toilet.getRoomType());
+                        toiletType.setText(toilet.getToiletType());
+                        toiletRating.setText(String.valueOf(toilet.getAvgRating()));
+                        toiletReviews.setText(String.valueOf(toilet.getNumReviews()));
+                        toiletCheckins.setText(String.valueOf(toilet.getNumCheckins()));
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+        db.collection("Reviews").whereEqualTo("toiletID", toiletRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<Review> reviews = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        reviews.add(document.toObject(Review.class));
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                    }
+                    reviewAdapter.setReviews(reviews);
+                    reviewAdapter.notifyDataSetChanged();
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         Intent i = getIntent();
         String toiletRefString = i.getStringExtra(TOILET_KEY);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         DocumentReference toiletRef = db.collection("Toilets").document(toiletRefString);
 
+        btnAddReview.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ToiletActivity.this, ReviewAddActivity.class);
+                intent.putExtra(ToiletActivity.TOILET_KEY, toiletRefString);
+                startActivity(intent);
+            }
+        });
         toiletRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

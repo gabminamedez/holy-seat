@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +50,9 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +73,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+
+        this.sp = PreferenceManager.getDefaultSharedPreferences(this);
+        this.editor = sp.edit();
 
         toLogin.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -171,7 +179,8 @@ public class RegisterActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
                                                 Intent i = new Intent(RegisterActivity.this, MainActivity.class);
-                                                i.putExtra(ProfileActivity.PROFILE_KEY, documentReference.getId());
+                                                editor.putString(ProfileActivity.PROFILE_KEY, documentReference.getId());
+                                                editor.commit();
                                                 startActivity(i);
                                                 finish();
                                             }

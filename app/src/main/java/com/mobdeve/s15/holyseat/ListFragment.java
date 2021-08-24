@@ -32,6 +32,8 @@ public class ListFragment extends Fragment {
     private RecyclerView recyclerView;
     private ToiletListAdapter toiletListAdapter;
 
+    private FirebaseFirestore db;
+
     public ListFragment() {
         // Required empty public constructor
     }
@@ -47,11 +49,12 @@ public class ListFragment extends Fragment {
         this.recyclerView.setAdapter(this.toiletListAdapter);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
         db.collection("Toilets").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: Adding toilets");
                     ArrayList<Toilet> toilets = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()){
                         Log.d(TAG, document.getId() + " => " + document.getData());
@@ -67,5 +70,28 @@ public class ListFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        db.collection("Toilets").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "onComplete: Adding toilets");
+                    ArrayList<Toilet> toilets = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()){
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        toilets.add(document.toObject(Toilet.class));
+                    }
+                    Log.d(TAG, "onComplete: Found documents");
+                    toiletListAdapter.setToilets(toilets);
+                    toiletListAdapter.notifyDataSetChanged();
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
     }
 }
