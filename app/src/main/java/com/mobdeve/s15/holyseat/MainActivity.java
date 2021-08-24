@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -34,9 +35,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.JsonElement;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
@@ -49,19 +54,30 @@ import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
+import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.SupportMapFragment;
+import com.mapbox.mapboxsdk.plugins.annotation.OnSymbolClickListener;
+import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
 
@@ -167,8 +183,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-        public void switchFragment(Bundle savedInstanceState) {
-
+    @SuppressWarnings( {"MissingPermission"})
+    public void switchFragment(Bundle savedInstanceState) {
         if(isMapView) {
             ((Switch) findViewById(R.id.fragmentSwitch)).setText("Map View");
             SupportMapFragment mapFragment;
@@ -197,42 +213,95 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         globalMap = mapboxMap;
 
                         List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
-                        symbolLayerIconFeatureList.add(Feature.fromGeometry(
-                                Point.fromLngLat(121.0096107326682, 14.604617512957176)));
-                        symbolLayerIconFeatureList.add(Feature.fromGeometry(
-                                Point.fromLngLat(121.012356644117, 14.57854558434147)));
-
-                        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_location_on_24, null);
-                        Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
-
-                        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/streets-v10")
-                                .withImage(ICON_ID, mBitmap)
-                                .withSource(new GeoJsonSource(SOURCE_ID,
-                                        FeatureCollection.fromFeatures(symbolLayerIconFeatureList)))
-                                .withLayer(new SymbolLayer(LAYER_ID, SOURCE_ID)
-                                        .withProperties(
-                                                iconImage(ICON_ID),
-                                                iconSize(2.0f),
-                                                iconAllowOverlap(true),
-                                                iconIgnorePlacement(true)
-                                        )
-                                ), new Style.OnStyleLoaded() {
-                                @Override
-                                public void onStyleLoaded(@NonNull Style style) {
-                                    globalStyle = style;
-                                    enableLocation(mapboxMap, style);
-                                }
-                        });
-
-                        mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("Toilets").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
-                            public boolean onMapClick(@NonNull LatLng point) {
-                                double temp_lat = point.getLatitude();
-                                double temp_lng = point.getLongitude();
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()){
+                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                        double lng = (Double) document.get("longitude");
+                                        double lat = (Double) document.get("latitude");
+                                        symbolLayerIconFeatureList.add(Feature.fromGeometry(
+                                                Point.fromLngLat(lng, lat)));
+                                    }
 
-                                // check db if may combination neto, retrieve accompanying data, and then flash modal
+                                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_location_on_24, null);
+                                    Bitmap mBitmap = BitmapUtils.getBitmapFromDrawable(drawable);
+                                    GeoJsonSource source = new GeoJsonSource(SOURCE_ID, FeatureCollection.fromFeatures(symbolLayerIconFeatureList));
+                                    SymbolLayer symbolLayer = new SymbolLayer(LAYER_ID, SOURCE_ID).withProperties(
+                                            iconImage(ICON_ID),
+                                            iconSize(2.0f),
+                                            iconAllowOverlap(true),
+                                            iconIgnorePlacement(true)
+                                    );
 
-                                return true;
+                                    mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/streets-v10")
+                                            .withImage(ICON_ID, mBitmap)
+                                            .withSource(source)
+                                            .withLayer(symbolLayer), new Style.OnStyleLoaded() {
+                                            @Override
+                                            public void onStyleLoaded(@NonNull Style style) {
+                                                globalStyle = style;
+                                                enableLocation(mapboxMap, style);
+                                            }
+                                    });
+
+                                    mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+                                        @Override
+                                        public boolean onMapClick(@NonNull LatLng point) {
+                                            PointF screenPoint = mapboxMap.getProjection().toScreenLocation(point);
+                                            List<Feature> features = mapboxMap.queryRenderedFeatures(screenPoint, LAYER_ID);
+                                            if (!features.isEmpty()) {
+                                                Feature feature = features.get(0);
+
+                                                String geoJsonString = feature.geometry().toJson();
+                                                try {
+                                                    JSONObject obj = new JSONObject(geoJsonString);
+                                                    JSONArray cJson = obj.getJSONArray("coordinates");
+                                                    List<Double> coordinates = new ArrayList<Double>();
+                                                    for(int i = 0; i < cJson.length(); i++){
+                                                        coordinates.add(cJson.getDouble(i));
+                                                    }
+
+                                                    Double marginOfError = 0.00001;
+                                                    Double lngLower = coordinates.get(0) - marginOfError;
+                                                    Double lngUpper = coordinates.get(0) + marginOfError;
+                                                    Double latLower = coordinates.get(1) - marginOfError;
+                                                    Double latUpper = coordinates.get(1) + marginOfError;
+
+                                                    CollectionReference toiletsRef = db.collection("Toilets");
+                                                    toiletsRef.whereLessThanOrEqualTo("longitude", lngUpper).whereGreaterThanOrEqualTo("longitude", lngLower);
+                                                    toiletsRef.whereLessThanOrEqualTo("latitude", latUpper).whereGreaterThanOrEqualTo("latitude", latLower);
+
+                                                    toiletsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                    Intent intent = new Intent(MainActivity.this, ToiletActivity.class);
+                                                                    intent.putExtra(ToiletActivity.TOILET_KEY, document.getId());
+                                                                    startActivity(intent);
+                                                                    break;
+                                                                }
+                                                            }
+                                                            else {
+                                                                Log.d(TAG, "Error getting documents: ", task.getException());
+                                                            }
+                                                        }
+                                                    });
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                            return true;
+                                        }
+                                    });
+                                }
+                                else {
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                }
                             }
                         });
                     }
@@ -246,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             manager.beginTransaction()
                     .replace(R.id.fragmentHolder, listFragment, listFragment.getTag())
                     .commit();
-
         }
     }
 

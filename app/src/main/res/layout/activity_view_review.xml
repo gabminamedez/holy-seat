@@ -1,161 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar3"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/midnight"
-        android:gravity="center"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/titleHeader3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/laila_bold"
-        android:text="Holy Seat"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@id/toolbar3"
-        app:layout_constraintEnd_toEndOf="@id/toolbar3"
-        app:layout_constraintStart_toStartOf="@id/toolbar3"
-        app:layout_constraintTop_toTopOf="@id/toolbar3" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/toolbar3">
-
-        <ImageView
-            android:id="@+id/reviewToiletImg"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            tools:srcCompat="@tools:sample/avatars" />
+            android:background="@color/midnight"
+            android:gravity="center"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/titleHeader3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/laila_bold"
+            android:text="Holy Seat"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar3"
+            app:layout_constraintEnd_toEndOf="@id/toolbar3"
+            app:layout_constraintStart_toStartOf="@id/toolbar3"
+            app:layout_constraintTop_toTopOf="@id/toolbar3" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="15dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/toolbar3">
+
+            <ImageView
+                android:id="@+id/reviewToiletImg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                tools:srcCompat="@tools:sample/avatars" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_margin="15dp"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/reviewToiletName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/rambla_bold"
-                    android:text="TextView"
-                    android:textColor="@color/midnight"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/textView16"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/lato"
-                    android:text="@string/rating"
-                    android:textSize="16sp" />
-
-                <RatingBar
-                    android:id="@+id/reviewRating"
-                    style="@style/Widget.AppCompat.RatingBar.Small"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:numStars="5"
-                    android:progressBackgroundTint="@color/grey"
-                    android:progressTint="@color/cerulean"
-                    android:rating="3.5"
-                    android:stepSize="1" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textView17"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/lato"
-                    android:text="@string/reviewer"
-                    android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/reviewToiletName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/rambla_bold"
+                        android:text="TextView"
+                        android:textColor="@color/midnight"
+                        android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/reviewReviewer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:fontFamily="@font/rambla_bold"
-                    android:text="TextView"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
+                    <TextView
+                        android:id="@+id/textView16"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/lato"
+                        android:text="@string/rating"
+                        android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:fontFamily="@font/lato"
-                    android:text="@string/date_posted"
-                    android:textSize="16sp" />
+                    <RatingBar
+                        android:id="@+id/reviewRating"
+                        style="@style/Widget.AppCompat.RatingBar.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:numStars="5"
+                        android:progressBackgroundTint="@color/grey"
+                        android:progressTint="@color/cerulean"
+                        android:rating="3.5"
+                        android:stepSize="1" />
 
-                <TextView
-                    android:id="@+id/reviewDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/lato"
-                    android:text="TextView"
-                    android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/textView17"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/lato"
+                        android:text="@string/reviewer"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/reviewReviewer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:fontFamily="@font/rambla_bold"
+                        android:text="TextView"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/lato"
+                        android:text="@string/date_posted"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/reviewDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lato"
+                        android:text="TextView"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/btnEditReview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/cerulean"
+                        android:fontFamily="@font/rambla_bold"
+                        android:text="@string/edit_review"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/btnDeleteReview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/red"
+                        android:fontFamily="@font/rambla_bold"
+                        android:text="@string/delete_review"
+                        android:textAllCaps="false"
+                        android:textSize="14sp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/btnEditReview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/cerulean"
-                    android:fontFamily="@font/rambla_bold"
-                    android:text="@string/edit_review"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
-
-                <Button
-                    android:id="@+id/btnDeleteReview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/red"
-                    android:fontFamily="@font/rambla_bold"
-                    android:text="@string/delete_review"
-                    android:textAllCaps="false"
-                    android:textSize="14sp" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/reviewDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/lato"
+                android:text="TextView"
+                android:textSize="14sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/reviewDetails"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/lato"
-            android:text="TextView"
-            android:textSize="14sp" />
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/midnight"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar3"
+            app:layout_constraintStart_toStartOf="@id/toolbar3"
+            app:layout_constraintTop_toTopOf="@id/toolbar3"
+            app:srcCompat="@drawable/ic_baseline_arrow_back_24" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
