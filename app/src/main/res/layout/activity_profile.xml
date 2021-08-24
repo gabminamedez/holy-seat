@@ -129,7 +129,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="15dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -148,7 +151,8 @@
                 android:id="@+id/spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/btn_dropdown"
+                android:layout_weight="1"
+                android:backgroundTint="@color/midnight"
                 android:spinnerMode="dropdown" />
         </LinearLayout>
 

@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String profileRefString;
 
     private Boolean isMapView = false;
 
@@ -105,14 +106,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
+
+        Intent i = getIntent();
+        profileRefString = i.getStringExtra(ProfileActivity.PROFILE_KEY);
         if (mAuth.getCurrentUser() == null){
             Log.d(TAG, "onCreate: NO USER");
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
-        else
+        else if (profileRefString == null){// user opening the app while logged in
+            db.collection("Users")
+                    .whereEqualTo("email", mAuth.getCurrentUser().getEmail())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    profileRefString = document.getId();
+                                }
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
             Log.d(TAG, "onCreate: MAY USER " + mAuth.getCurrentUser().toString());
+        }
         
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
@@ -129,8 +149,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        Intent i = getIntent();
-        String profileRefString = i.getStringExtra(ProfileActivity.PROFILE_KEY);
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
