@@ -25,6 +25,7 @@
     <string name="navDrawerClose">Close Navigation Drawer</string>
     <string name="register_label">Create an account</string>
     <string name="login_label">Welcome back!</string>
+    <string name="email_user_label">Email/Username</string>
     <string name="email_label">Email</string>
     <string name="name_label">Display Name</string>
     <string name="username_label">Username</string>

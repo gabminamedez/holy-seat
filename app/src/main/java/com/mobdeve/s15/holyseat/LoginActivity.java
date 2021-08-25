@@ -44,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
 
+    private String email;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = loginEmail.getText().toString().trim();
+                email = loginEmail.getText().toString().trim();
                 String password = loginPassword.getText().toString().trim();
                 Log.d(TAG, "onClick: " + email);
                 Log.d(TAG, "onClick: " + password);
@@ -89,8 +91,23 @@ public class LoginActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                        changeString(email, document.get("email").toString());
-                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                        email = document.get("email").toString();
+                                        mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                            @Override
+                                            public void onSuccess(AuthResult authResult) {
+                                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                editor.putString(ProfileActivity.PROFILE_KEY, document.getId());
+                                                editor.commit();
+                                                startActivity(i);
+                                                finish();
+                                                Log.d(TAG, "onSuccess: User authenticated");
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                errorLogin.setVisibility(View.VISIBLE);
+                                            }
+                                        });
                                     }
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -98,38 +115,39 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         });
                     }
-
-                    mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                        @Override
-                        public void onSuccess(AuthResult authResult) {
-                            db.collection("Users")
-                                    .whereEqualTo("email", email)
-                                    .get()
-                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                                    editor.putString(ProfileActivity.PROFILE_KEY, document.getId());
+                    else{
+                        mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                            @Override
+                            public void onSuccess(AuthResult authResult) {
+                                db.collection("Users")
+                                        .whereEqualTo("email", email)
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        editor.putString(ProfileActivity.PROFILE_KEY, document.getId());
+                                                    }
+                                                    editor.commit();
+                                                    startActivity(i);
+                                                    finish();
+                                                    Log.d(TAG, "onComplete: User found");
+                                                } else {
+                                                    Log.d(TAG, "Error getting documents: ", task.getException());
                                                 }
-                                                editor.commit();
-                                                startActivity(i);
-                                                finish();
-                                                Log.d(TAG, "onComplete: User found");
-                                            } else {
-                                                Log.d(TAG, "Error getting documents: ", task.getException());
                                             }
-                                        }
-                                    });
-                            Log.d(TAG, "onSuccess: User authenticated");
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            errorLogin.setVisibility(View.VISIBLE);
-                        }
-                    });
+                                        });
+                                Log.d(TAG, "onSuccess: User authenticated");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                errorLogin.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -145,8 +163,5 @@ public class LoginActivity extends AppCompatActivity {
         if (email == null)
             return false;
         return pat.matcher(email).matches();
-    }
-    public void changeString(String str1, String str2){
-        str1 = str2;
     }
 }
