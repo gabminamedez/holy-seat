@@ -101,21 +101,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private Boolean isMapView = false;
 
+    private SharedPreferences sp;
+    private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
+        this.sp = PreferenceManager.getDefaultSharedPreferences(this);
+        this.editor = sp.edit();
 
-        Intent i = getIntent();
-        profileRefString = i.getStringExtra(ProfileActivity.PROFILE_KEY);
+        profileRefString = sp.getString(ProfileActivity.PROFILE_KEY, "");
         if (mAuth.getCurrentUser() == null){
             Log.d(TAG, "onCreate: NO USER");
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
-        else if (profileRefString == null){// user opening the app while logged in
+        else if (profileRefString.isEmpty()){// user opening the app while logged in
             db.collection("Users")
                     .whereEqualTo("email", mAuth.getCurrentUser().getEmail())
                     .get()
@@ -125,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     profileRefString = document.getId();
+                                    editor.putString(ProfileActivity.PROFILE_KEY, profileRefString);
+                                    editor.commit();
                                 }
                             } else {
                                 Log.d(TAG, "Error getting documents: ", task.getException());
