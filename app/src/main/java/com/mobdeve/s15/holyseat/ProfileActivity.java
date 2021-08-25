@@ -1,7 +1,9 @@
 package com.mobdeve.s15.holyseat;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +34,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+import io.grpc.InternalNotifyOnServerBuild;
+
 public class ProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private final String TAG = "ProfileActivity";
@@ -47,6 +51,9 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
     private Spinner spinner;
     private RecyclerView recyclerActivities;
     private ProfileAdapter profileAdapter;
+
+    private FirebaseFirestore db;
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +82,8 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
 
         Intent i = getIntent();
         String profileRefString = i.getStringExtra(PROFILE_KEY);
-        System.out.println(profileRefString);
+
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
 
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -93,9 +101,52 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         });
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(TAG, "onItemSelected: " + parent.getItemAtPosition(position));
+        if (parent.getItemAtPosition(position).equals("Reviews")){
+            ArrayList<Review> reviews = new ArrayList<>();
+            for (Activity a: profileAdapter.getActivities()){
+                if (a instanceof Review)
+                    reviews.add((Review) a);
+            }
+            profileAdapter.filterReviews(reviews);
+            recyclerActivities.setAdapter(profileAdapter);
+        }
+        else if (parent.getItemAtPosition(position).equals("Check-ins")){
+            ArrayList<CheckIn> checkIns = new ArrayList<>();
+            for (Activity a: profileAdapter.getActivities()){
+                if (a instanceof CheckIn)
+                    checkIns.add((CheckIn) a);
+            }
+            profileAdapter.filterCheckIns(checkIns);
+            recyclerActivities.setAdapter(profileAdapter);
+        }
+        else{
+            profileAdapter.filterAll();
+            profileAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent i = getIntent();
+        String profileRefString = i.getStringExtra(PROFILE_KEY);
         DocumentReference profileRef = db.collection("Users").document(profileRefString);
+        if (!sp.getString(ProfileActivity.PROFILE_KEY, "").equals(profileRefString))
+            btnEditProfile.setVisibility(View.INVISIBLE);
+        System.out.println(sp.getString(ProfileActivity.PROFILE_KEY, "") + profileRefString);
 
         profileRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -152,38 +203,5 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                 }
             }
         });
-
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.d(TAG, "onItemSelected: " + parent.getItemAtPosition(position));
-        if (parent.getItemAtPosition(position).equals("Reviews")){
-            ArrayList<Review> reviews = new ArrayList<>();
-            for (Activity a: profileAdapter.getActivities()){
-                if (a instanceof Review)
-                    reviews.add((Review) a);
-            }
-            profileAdapter.filterReviews(reviews);
-            recyclerActivities.setAdapter(profileAdapter);
-        }
-        else if (parent.getItemAtPosition(position).equals("Check-ins")){
-            ArrayList<CheckIn> checkIns = new ArrayList<>();
-            for (Activity a: profileAdapter.getActivities()){
-                if (a instanceof CheckIn)
-                    checkIns.add((CheckIn) a);
-            }
-            profileAdapter.filterCheckIns(checkIns);
-            recyclerActivities.setAdapter(profileAdapter);
-        }
-        else{
-            profileAdapter.filterAll();
-            profileAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
     }
 }

@@ -24,6 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
@@ -76,11 +79,26 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "onClick: " + email);
                 Log.d(TAG, "onClick: " + password);
 
-
                 if (email.isEmpty() || password.isEmpty()){
                     errorLogin.setVisibility(View.VISIBLE);
                 }
                 else{
+                    if (!isValidEmail(email)){
+                        db.collection("Users").whereEqualTo("username", email).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        changeString(email, document.get("email").toString());
+                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                    }
+                                } else {
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+                    }
+
                     mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
@@ -115,5 +133,20 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    // Adapted from: https://www.geeksforgeeks.org/check-email-address-valid-not-java/
+    public static boolean isValidEmail(String email){
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
+    public void changeString(String str1, String str2){
+        str1 = str2;
     }
 }

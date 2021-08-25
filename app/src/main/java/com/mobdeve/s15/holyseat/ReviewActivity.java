@@ -72,6 +72,7 @@ public class ReviewActivity extends AppCompatActivity {
         String reviewRefString = i.getStringExtra(REVIEW_KEY);
         String toiletRefString = i.getStringExtra(ToiletActivity.TOILET_KEY);
 
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,9 +167,15 @@ public class ReviewActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
+    }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    @Override
+    protected void onStart() {
+        super.onStart();
 
+        Intent i = getIntent();
+        String reviewRefString = i.getStringExtra(REVIEW_KEY);
+        String toiletRefString = i.getStringExtra(ToiletActivity.TOILET_KEY);
         DocumentReference toiletRef = db.collection("Toilets").document(toiletRefString);
         DocumentReference reviewRef = db.collection("Reviews").document(reviewRefString);
         toiletRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -208,6 +215,12 @@ public class ReviewActivity extends AppCompatActivity {
                                 v.getContext().startActivity(i);
                             }
                         });
+
+                        if (!sp.getString(ProfileActivity.PROFILE_KEY, "").equals(review.getReviewerID().getId())){
+                            btnEditReview.setVisibility(View.INVISIBLE);
+                            btnDeleteReview.setVisibility(View.INVISIBLE);
+                        }
+                        System.out.println(sp.getString(ProfileActivity.PROFILE_KEY, "") + review.getReviewerID().getId());
                     } else {
                         Log.d(TAG, "No such document");
                     }

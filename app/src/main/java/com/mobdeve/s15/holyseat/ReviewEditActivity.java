@@ -1,20 +1,31 @@
 package com.mobdeve.s15.holyseat;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReviewEditActivity extends AppCompatActivity {
 
@@ -28,7 +39,6 @@ public class ReviewEditActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
 
-    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +68,51 @@ public class ReviewEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog dialog = new Dialog(ReviewEditActivity.this);
+                //We have added a title in the custom layout. So let's disable the default title.
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                //The user will be able to cancel the dialog bu clicking anywhere outside the dialog.
+                dialog.setCancelable(true);
+                //Mention the name of the layout of your custom dialog.
+                dialog.setContentView(R.layout.edit_review_dialog);
+                //Initializing the views of the dialog.
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                Button btnCancel = dialog.findViewById(R.id.btnCancel);
+                Button btnEdit = dialog.findViewById(R.id.btnEdit);
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                btnEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        float rating = editRating.getRating();
+                        String details = editReviewDetails.getText().toString();
+                        Map<String, Object> newReview = new HashMap<>();
+                        newReview.put("rating", rating);
+                        newReview.put("details", details);
+                        newReview.put("numUpvotes", 0);
+                        newReview.put("posted", FieldValue.serverTimestamp());
+                        db.collection("Reviews").document(reviewRefString).update(newReview).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Log.d(TAG, "onSuccess: Review successfully updated.");
+                                finish();
+                            }
+                        });
+                    }
+                });
+                dialog.show();
             }
         });
     }
