@@ -90,24 +90,29 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        email = document.get("email").toString();
-                                        mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                            @Override
-                                            public void onSuccess(AuthResult authResult) {
-                                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                                editor.putString(ProfileActivity.PROFILE_KEY, document.getId());
-                                                editor.commit();
-                                                startActivity(i);
-                                                finish();
-                                                Log.d(TAG, "onSuccess: User authenticated");
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                errorLogin.setVisibility(View.VISIBLE);
-                                            }
-                                        });
+                                    if (task.getResult().isEmpty()){
+                                        errorLogin.setVisibility(View.VISIBLE);
+                                    }
+                                    else{
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            email = document.get("email").toString();
+                                            mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                                @Override
+                                                public void onSuccess(AuthResult authResult) {
+                                                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                    editor.putString(ProfileActivity.PROFILE_KEY, document.getId());
+                                                    editor.commit();
+                                                    startActivity(i);
+                                                    finish();
+                                                    Log.d(TAG, "onSuccess: User authenticated");
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    errorLogin.setVisibility(View.VISIBLE);
+                                                }
+                                            });
+                                        }
                                     }
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
