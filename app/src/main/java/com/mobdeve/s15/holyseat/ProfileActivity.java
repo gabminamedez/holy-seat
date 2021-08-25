@@ -88,7 +88,9 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ProfileActivity.this, ProfileEditActivity.class);
+                intent.putExtra(ProfileEditActivity.PROFILE_KEY, profileRefString);
                 startActivity(intent);
+                finish();
             }
         });
 
