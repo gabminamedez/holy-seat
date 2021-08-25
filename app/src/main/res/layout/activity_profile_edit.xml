@@ -58,80 +58,125 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/titleHeader2" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/detailsInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/detailsForm"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/email_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/reviewAddLabel">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/detailsInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/email_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/reviewAddLabel">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
                 android:fontFamily="@font/lato"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:text="@string/error_email"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/nameEditInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/name_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/detailsInput">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nameEditInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/name_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailsInput">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
                 android:fontFamily="@font/lato"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:text="@string/error_display"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/usernameEditInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/username_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nameEditInput">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/usernameEditInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/lato"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/username_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nameEditInput">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:fontFamily="@font/lato"
+                android:text="@string/error_user"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <View
             android:id="@+id/divider"
@@ -141,7 +186,7 @@
             android:background="@color/charcoal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/usernameEditInput" />
+            app:layout_constraintTop_toBottomOf="@id/detailsForm" />
 
         <TextView
             android:id="@+id/profileEditLabel2"
@@ -156,57 +201,91 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/passwordEditInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/passwordForm"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/password_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profileEditLabel2">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordEditInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/password_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileEditLabel2">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editPassword1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorPass1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
                 android:fontFamily="@font/lato"
-                android:inputType="textPassword"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:text="@string/error_pass1"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/password2EditInput"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="50dp"
-            android:hint="@string/confirm_password_label"
-            app:boxBackgroundColor="@color/off_white"
-            app:boxStrokeColor="@color/midnight"
-            app:hintTextColor="@color/midnight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/passwordEditInput">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/password2EditInput"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/lato"
-                android:inputType="textPassword"
-                android:singleLine="true"
-                android:textSize="14sp" />
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="50dp"
+                android:hint="@string/confirm_password_label"
+                app:boxBackgroundColor="@color/off_white"
+                app:boxStrokeColor="@color/midnight"
+                app:hintTextColor="@color/midnight"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/passwordEditInput">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editPassword2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lato"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/errorPass2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:fontFamily="@font/lato"
+                android:text="@string/error_pass2"
+                android:textColor="@color/error_red"
+                android:textSize="10sp"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/addButton"
@@ -219,7 +298,7 @@
             android:textColor="@color/off_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password2EditInput" />
+            app:layout_constraintTop_toBottomOf="@+id/passwordForm" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
