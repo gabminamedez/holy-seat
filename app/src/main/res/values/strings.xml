@@ -58,4 +58,10 @@
     <string name="error_pass2">Passwords don"'"t match.</string>
     <string name="error_login">Invalid credentials. Input a valid email/username and password.</string>
     <string name="no_review_details">You have not placed any details in your review. Do you want to continue adding it?</string>
+    <string name="checkin_prompt">Would you like to add a review?</string>
+    <string name="no_thanks">No thanks</string>
+    <string name="view_toilet_details">View Toilet Details</string>
+    <string name="filter_toilet">Filter Toilets</string>
+    <string name="zero">0</string>
+    <string name="one_hundred">100</string>
 </resources>
