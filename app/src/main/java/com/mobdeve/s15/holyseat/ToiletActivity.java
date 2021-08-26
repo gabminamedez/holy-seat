@@ -88,44 +88,45 @@ public class ToiletActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        toiletRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Toilet toilet = document.toObject(Toilet.class);
-//                        toiletImg
-                        toiletName.setText(toilet.getLocation());
-                        roomType.setText(toilet.getRoomType());
-                        toiletType.setText(toilet.getToiletType());
-                        toiletRating.setText(String.valueOf(toilet.getAvgRating()));
-                        toiletReviews.setText(String.valueOf(toilet.getNumReviews()));
-                        toiletCheckins.setText(String.valueOf(toilet.getNumCheckins()));
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-        db.collection("Reviews").whereEqualTo("toiletID", toiletRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    ArrayList<Review> reviews = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        reviews.add(document.toObject(Review.class));
-                        Log.d(TAG, document.getId() + " => " + document.getData());
-                    }
-                    reviewAdapter.setReviews(reviews);
-                    reviewAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
+//        toiletRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    DocumentSnapshot document = task.getResult();
+//                    if (document.exists()) {
+//                        Toilet toilet = document.toObject(Toilet.class);
+////                        toiletImg
+//                        toiletName.setText(toilet.getLocation());
+//                        roomType.setText(toilet.getRoomType());
+//                        toiletType.setText(toilet.getToiletType());
+//                        toiletRating.setText(String.valueOf(toilet.getAvgRating()));
+//                        toiletReviews.setText(String.valueOf(toilet.getNumReviews()));
+//                        toiletCheckins.setText(String.valueOf(toilet.getNumCheckins()));
+//                    } else {
+//                        Log.d(TAG, "No such document");
+//                    }
+//                } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+//                }
+//            }
+//        });
+//        db.collection("Reviews").whereEqualTo("toiletID", toiletRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    ArrayList<Review> reviews = new ArrayList<>();
+//                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                        reviews.add(document.toObject(Review.class));
+//                        Log.d(TAG, document.getId() + " => " + document.getData());
+//                    }
+//                    reviewAdapter.setReviews(reviews);
+//                    reviewAdapter.sortReviews();
+//                    reviewAdapter.notifyDataSetChanged();
+//                } else {
+//                    Log.d(TAG, "Error getting documents: ", task.getException());
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -177,6 +178,7 @@ public class ToiletActivity extends AppCompatActivity {
                         Log.d(TAG, document.getId() + " => " + document.getData());
                     }
                     reviewAdapter.setReviews(reviews);
+                    reviewAdapter.sortReviews();
                     reviewAdapter.notifyDataSetChanged();
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());

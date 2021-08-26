@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHolder>{
     private final String TAG = "ReviewAdapter";
@@ -87,5 +89,24 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
 
     public void setReviews(ArrayList<Review> reviews){
         this.reviews = reviews;
+    }
+
+    public void sortReviews(){
+        Collections.sort(this.reviews, new Comparator<Review>(){
+            public int compare(Review obj1, Review obj2) {
+                // ## Ascending order
+//                return obj1.getDate().compareTo(obj2.getDate());
+                // ## Descending order
+                return obj2.getDate().compareTo(obj1.getDate());
+            }
+        });
+        Collections.sort(this.reviews, new Comparator<Review>(){
+            public int compare(Review obj1, Review obj2) {
+                // ## Ascending order
+//                return obj1.getDate().compareTo(obj2.getDate());
+                // ## Descending order
+                return obj2.getDate().compareTo(obj1.getDate());
+            }
+        });
     }
 }
