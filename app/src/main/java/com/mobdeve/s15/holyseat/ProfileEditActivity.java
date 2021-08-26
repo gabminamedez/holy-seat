@@ -131,7 +131,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                             if (task.isSuccessful() && !task.getResult().isEmpty()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     if (!document.getString("email").equals(curEmail)) {
-                                        Toast.makeText(ProfileEditActivity.this, "ops email", Toast.LENGTH_SHORT).show();
                                         errorEmail.setText(R.string.error_email_exist);
                                         errorEmail.setVisibility(View.VISIBLE);
                                         invalid();
@@ -208,89 +207,43 @@ public class ProfileEditActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Log.d(TAG, "User account deleted.");
-                                    }
-                                }
-                            });
-
-                    mAuth.createUserWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        db.document("Users/" + profileRefString)
-                                                .update("displayName", displayName,
-                                                        "email", email,
-                                                        "username", userName)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        mAuth.createUserWithEmailAndPassword(email, password)
+                                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                                     @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                                        if (task.isSuccessful()) {
+                                                            db.document("Users/" + profileRefString)
+                                                                    .update("displayName", displayName,
+                                                                            "email", email,
+                                                                            "username", userName)
+                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        @Override
+                                                                        public void onSuccess(Void aVoid) {
+                                                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                                            Intent intent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
+                                                                            intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
+                                                                            startActivity(intent);
+                                                                            finish();
+                                                                        }
+                                                                    })
+                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Log.w(TAG, "Error updating document", e);
+                                                                        }
+                                                                    });
+                                                        }
                                                     }
                                                 })
                                                 .addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
-                                                        Log.w(TAG, "Error updating document", e);
+                                                        Log.w(TAG, "Error finding user", e);
                                                     }
                                                 });
-
-//                                        mAuth.getCurrentUser().updatePassword(password)
-//                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                                    @Override
-//                                                    public void onSuccess(Void aVoid) {
-//                                                        Log.d(TAG, "Password successfully updated!");
-//                                                    }
-//                                                })
-//                                                .addOnFailureListener(new OnFailureListener() {
-//                                                    @Override
-//                                                    public void onFailure(@NonNull Exception e) {
-//                                                        Log.w(TAG, "Error updating password", e);
-//                                                    }
-//                                                });
-
-                                        Intent intent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
-                                        intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
-                                        startActivity(intent);
-                                        finish();
                                     }
                                 }
                             });
-//                    db.document("Users/" + profileRefString)
-//                            .update("displayName", displayName,
-//                                    "email", email,
-//                                    "username", userName)
-//                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                @Override
-//                                public void onSuccess(Void aVoid) {
-//                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
-//                                }
-//                            })
-//                            .addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception e) {
-//                                    Log.w(TAG, "Error updating document", e);
-//                                }
-//                            });
-//
-//                    mAuth.getCurrentUser().updatePassword(password)
-//                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                @Override
-//                                public void onSuccess(Void aVoid) {
-//                                    Log.d(TAG, "Password successfully updated!");
-//                                }
-//                            })
-//                            .addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception e) {
-//                                    Log.w(TAG, "Error updating password", e);
-//                                }
-//                            });
-//
-//                    Intent intent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
-//                    intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
-//                    startActivity(intent);
-//                    finish();
-
                 }
                 else {
                     Log.d(TAG, "onClick: User register failed.");

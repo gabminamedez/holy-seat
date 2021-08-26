@@ -56,6 +56,6 @@
     <string name="error_user_unique">Username must be unique.</string>
     <string name="error_pass1">Password must have at least 8 characters.</string>
     <string name="error_pass2">Passwords don"'"t match.</string>
-    <string name="error_login">Invalid email and/or password.</string>
+    <string name="error_login">Invalid credentials. Input a valid email/username and password.</string>
     <string name="no_review_details">You have not placed any details in your review. Do you want to continue adding it?</string>
 </resources>
