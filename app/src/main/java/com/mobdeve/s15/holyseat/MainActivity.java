@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -396,9 +397,57 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                             if (task.isSuccessful()) {
                                                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                    Intent intent = new Intent(MainActivity.this, ToiletActivity.class);
-                                                                    intent.putExtra(ToiletActivity.TOILET_KEY, document.getId());
-                                                                    startActivity(intent);
+                                                                    Dialog dialog = new Dialog(MainActivity.this);
+                                                                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                                                    dialog.setCancelable(true);
+                                                                    dialog.setContentView(R.layout.toilet_map_detail_dialog);
+                                                                    dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                                                    TextView toiletMapName = dialog.findViewById(R.id.toiletMapName);
+                                                                    toiletMapName.setText(document.getString("location"));
+                                                                    TextView toiletMapRoom = dialog.findViewById(R.id.toiletMapRoom);
+                                                                    toiletMapRoom.setText(document.getString("roomType"));
+                                                                    TextView toiletMapType = dialog.findViewById(R.id.toiletMapType);
+                                                                    toiletMapType.setText(document.getString("toiletType"));
+                                                                    RatingBar ratingBar = dialog.findViewById(R.id.ratingBar);
+                                                                    ratingBar.setRating(document.getDouble("avgRating").floatValue());
+                                                                    Button toiletMapCheckin = dialog.findViewById(R.id.toiletMapCheckin);
+                                                                    Button toiletMapAddReview = dialog.findViewById(R.id.toiletMapAddReview);
+                                                                    Button toiletMapToilet = dialog.findViewById(R.id.toiletMapToilet);
+                                                                    ImageButton backMapButton = dialog.findViewById(R.id.backMapButton);
+
+                                                                    dialog.show();
+
+                                                                    backMapButton.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            dialog.dismiss();
+                                                                        }
+                                                                    });
+                                                                    toiletMapCheckin.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            dialog.dismiss();
+                                                                        }
+                                                                    });
+                                                                    toiletMapAddReview.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            dialog.dismiss();
+                                                                            Intent intent = new Intent(MainActivity.this, ReviewAddActivity.class);
+                                                                            intent.putExtra(ToiletActivity.TOILET_KEY, document.getId());
+                                                                            startActivity(intent);
+                                                                        }
+                                                                    });
+                                                                    toiletMapToilet.setOnClickListener(new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(View v) {
+                                                                            dialog.dismiss();
+                                                                            Intent intent = new Intent(MainActivity.this, ToiletActivity.class);
+                                                                            intent.putExtra(ToiletActivity.TOILET_KEY, document.getId());
+                                                                            startActivity(intent);
+                                                                        }
+                                                                    });
+
                                                                     break;
                                                                 }
                                                             }

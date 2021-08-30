@@ -34,6 +34,7 @@ public class ReviewActivity extends AppCompatActivity {
 
     private final String TAG = "ReviewActivity";
     public static String REVIEW_KEY = "REVIEW_KEY";
+    public static String TOILET_KEY = "TOILET_KEY";
 
     private ImageButton backButton;
     private ImageView reviewToiletImg;
@@ -85,6 +86,7 @@ public class ReviewActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ReviewActivity.this, ReviewEditActivity.class);
                 intent.putExtra(REVIEW_KEY, reviewRefString);
+                intent.putExtra(TOILET_KEY, toiletRefString);
                 startActivity(intent);
             }
         });

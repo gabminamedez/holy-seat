@@ -15,6 +15,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,6 +38,7 @@ public class ReviewAddActivity extends AppCompatActivity {
     private RatingBar addRating;
     private TextInputEditText addReviewDetails;
     private Button addButton;
+    private TextView reviewAddLabel;
 
     private FirebaseFirestore db;
 
@@ -50,6 +52,7 @@ public class ReviewAddActivity extends AppCompatActivity {
         addRating = findViewById(R.id.addRating);
         addReviewDetails = findViewById(R.id.addReviewDetails);
         addButton = findViewById(R.id.addButton);
+        reviewAddLabel = findViewById(R.id.reviewAddLabel);
 
         db = FirebaseFirestore.getInstance();
 
@@ -57,6 +60,15 @@ public class ReviewAddActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         String toiletRefString = i.getStringExtra(ToiletActivity.TOILET_KEY);
+
+        db.collection("Toilets").document(toiletRefString).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Toilet toilet = documentSnapshot.toObject(Toilet.class);
+                reviewAddLabel.setText("Add Review for " + toilet.getLocation());
+
+            }
+        });
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
