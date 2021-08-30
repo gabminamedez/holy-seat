@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private String roomFilter = "All Rooms";
     private String toiletFilter = "All Toilets";
-    private float ratingFilter = 0;
+    private int ratingFilter = 0;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -218,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Spinner spinnerToilet = dialog.findViewById(R.id.spinnerToilet);
                 spinnerToilet.setSelection(getToiletFilterId(toiletFilter));
                 SeekBar seekRating = dialog.findViewById(R.id.seekRating);
+                seekRating.setProgress(ratingFilter);
                 TextView curRating = dialog.findViewById(R.id.curRating);
                 curRating.setText(Integer.toString((int) ratingFilter));
                 Button btnCancel = dialog.findViewById(R.id.btnCancelFilter);
@@ -252,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onClick(View v) {
                         String roomType = spinnerRoom.getSelectedItem().toString();
                         String toiletType = spinnerToilet.getSelectedItem().toString();
-                        float minRating = seekRating.getProgress();
+                        int minRating = seekRating.getProgress();
                         roomFilter = roomType;
                         toiletFilter = toiletType;
                         ratingFilter = minRating;
@@ -320,8 +321,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         Log.d(TAG, document.getId() + " => " + document.getData());
                                         double lng = (Double) document.get("longitude");
                                         double lat = (Double) document.get("latitude");
-                                        symbolLayerIconFeatureList.add(Feature.fromGeometry(
-                                                Point.fromLngLat(lng, lat)));
+                                        if(document.getDouble("avgRating") >= ratingFilter) {
+                                            if(roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
+                                                symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
+                                            }
+                                            else if(!roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
+                                                if(roomFilter.equals(document.get("roomType"))) {
+                                                    symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
+                                                }
+                                            }
+                                            else if(roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                                                if(toiletFilter.equals(document.get("toiletType"))) {
+                                                    symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
+                                                }
+                                            }
+                                            else if(!roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                                                if(roomFilter.equals(document.get("roomType")) && toiletFilter.equals(document.get("toiletType"))) {
+                                                    symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
+                                                }
+                                            }
+                                        }
                                     }
 
                                     Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_location_on_24, null);

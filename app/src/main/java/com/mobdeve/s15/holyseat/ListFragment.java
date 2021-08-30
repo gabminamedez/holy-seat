@@ -36,13 +36,13 @@ public class ListFragment extends Fragment {
 
     private String roomFilter;
     private String toiletFilter;
-    private float ratingFilter;
+    private int ratingFilter;
 
     public ListFragment() {
         // Required empty public constructor
     }
 
-    public ListFragment(String roomFilter, String toiletFilter, float ratingFilter) {
+    public ListFragment(String roomFilter, String toiletFilter, int ratingFilter) {
         this.roomFilter = roomFilter;
         this.toiletFilter = toiletFilter;
         this.ratingFilter = ratingFilter;
@@ -68,22 +68,24 @@ public class ListFragment extends Fragment {
                     ArrayList<Toilet> toilets = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()){
                         Log.d(TAG, document.getId() + " => " + document.getData());
-                        if(roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
-                            toilets.add(document.toObject(Toilet.class));
-                        }
-                        else if(!roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
-                            if(roomFilter.equals(document.get("roomType"))) {
+                        if(document.getDouble("avgRating") >= ratingFilter) {
+                            if(roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
                                 toilets.add(document.toObject(Toilet.class));
                             }
-                        }
-                        else if(roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
-                            if(toiletFilter.equals(document.get("toiletType"))) {
-                                toilets.add(document.toObject(Toilet.class));
+                            else if(!roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
+                                if(roomFilter.equals(document.get("roomType"))) {
+                                    toilets.add(document.toObject(Toilet.class));
+                                }
                             }
-                        }
-                        else if(!roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
-                            if(roomFilter.equals(document.get("roomType")) && toiletFilter.equals(document.get("toiletType"))) {
-                                toilets.add(document.toObject(Toilet.class));
+                            else if(roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                                if(toiletFilter.equals(document.get("toiletType"))) {
+                                    toilets.add(document.toObject(Toilet.class));
+                                }
+                            }
+                            else if(!roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                                if(roomFilter.equals(document.get("roomType")) && toiletFilter.equals(document.get("toiletType"))) {
+                                    toilets.add(document.toObject(Toilet.class));
+                                }
                             }
                         }
                     }
@@ -110,22 +112,24 @@ public class ListFragment extends Fragment {
                     ArrayList<Toilet> toilets = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()){
                         Log.d(TAG, document.getId() + " => " + document.getData());
-                        if(roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
-                            toilets.add(document.toObject(Toilet.class));
-                        }
-                        else if(!roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
-                            if(roomFilter.equals(document.get("roomType"))) {
+                        if(document.getDouble("avgRating") >= ratingFilter) {
+                            if(roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
                                 toilets.add(document.toObject(Toilet.class));
                             }
-                        }
-                        else if(roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
-                            if(toiletFilter.equals(document.get("toiletType"))) {
-                                toilets.add(document.toObject(Toilet.class));
+                            else if(!roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
+                                if(roomFilter.equals(document.getString("roomType"))) {
+                                    toilets.add(document.toObject(Toilet.class));
+                                }
                             }
-                        }
-                        else if(!roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
-                            if(roomFilter.equals(document.get("roomType")) && toiletFilter.equals(document.get("toiletType"))) {
-                                toilets.add(document.toObject(Toilet.class));
+                            else if(roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                                if(toiletFilter.equals(document.getString("toiletType"))) {
+                                    toilets.add(document.toObject(Toilet.class));
+                                }
+                            }
+                            else if(!roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                                if(roomFilter.equals(document.getString("roomType")) && toiletFilter.equals(document.getString("toiletType"))) {
+                                    toilets.add(document.toObject(Toilet.class));
+                                }
                             }
                         }
                     }
