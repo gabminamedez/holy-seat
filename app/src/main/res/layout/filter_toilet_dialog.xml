@@ -14,51 +14,103 @@
         android:textColor="@color/midnight"
         android:textSize="20sp" />
 
-    <Spinner
-        android:id="@+id/spinnerRoom"
+    <TextView
+        android:id="@+id/roomFilterLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/filterToilet"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/lato"
+        android:text="@string/filter_room_label"
+        android:textColor="@color/midnight"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/spinnerRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/roomFilterLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@color/midnight"
+        android:entries="@array/roomTypeItems"
         android:spinnerMode="dropdown" />
+
+    <TextView
+        android:id="@+id/toiletFilterLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinnerRoom"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:fontFamily="@font/lato"
+        android:text="@string/filter_toilet_label"
+        android:textColor="@color/midnight"
+        android:textSize="18sp" />
 
     <Spinner
         android:id="@+id/spinnerToilet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/spinnerRoom"
+        android:layout_below="@id/toiletFilterLabel"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/midnight"
+        android:entries="@array/toiletTypeItems" />
 
-    <SeekBar
-        android:id="@+id/seekDistance"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/ratingFilterLabel"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/spinnerToilet"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginTop="18dp"
+        android:fontFamily="@font/lato"
+        android:text="@string/filter_rating_label"
+        android:textColor="@color/midnight"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/curRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ratingFilterLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:fontFamily="@font/lato"
+        android:text="@string/min_rating"
+        android:textSize="12sp" />
+
+    <SeekBar
+        android:id="@+id/seekRating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ratingFilterLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="100dp"
         android:backgroundTint="@color/black"
         android:progress="0"
+        android:min="0"
+        android:max="5"
         android:progressTint="@color/cerulean" />
 
     <LinearLayout
-        android:id="@+id/distanceLabel"
+        android:id="@+id/ratingLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/seekDistance"
-        android:layout_marginStart="62dp"
-        android:layout_marginEnd="50dp"
+        android:layout_below="@id/seekRating"
+        android:layout_marginStart="100dp"
+        android:layout_marginEnd="100dp"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/textView13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zero" />
+            android:text="@string/min_rating" />
 
         <Space
             android:layout_width="wrap_content"
@@ -69,20 +121,22 @@
             android:id="@+id/textView19"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/one_hundred" />
+            android:text="@string/max_rating" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/distanceLabel"
+        android:layout_below="@id/ratingLayout"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnCancelFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
             android:backgroundTint="@color/red"
             android:fontFamily="@font/rambla_bold"
             android:text="@string/cancel"
@@ -93,7 +147,7 @@
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnApplyFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/cerulean"

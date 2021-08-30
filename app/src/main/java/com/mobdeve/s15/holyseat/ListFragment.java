@@ -34,8 +34,18 @@ public class ListFragment extends Fragment {
 
     private FirebaseFirestore db;
 
+    private String roomFilter;
+    private String toiletFilter;
+    private float ratingFilter;
+
     public ListFragment() {
         // Required empty public constructor
+    }
+
+    public ListFragment(String roomFilter, String toiletFilter, float ratingFilter) {
+        this.roomFilter = roomFilter;
+        this.toiletFilter = toiletFilter;
+        this.ratingFilter = ratingFilter;
     }
 
     @Override
@@ -58,7 +68,24 @@ public class ListFragment extends Fragment {
                     ArrayList<Toilet> toilets = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()){
                         Log.d(TAG, document.getId() + " => " + document.getData());
-                        toilets.add(document.toObject(Toilet.class));
+                        if(roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
+                            toilets.add(document.toObject(Toilet.class));
+                        }
+                        else if(!roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
+                            if(roomFilter.equals(document.get("roomType"))) {
+                                toilets.add(document.toObject(Toilet.class));
+                            }
+                        }
+                        else if(roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                            if(toiletFilter.equals(document.get("toiletType"))) {
+                                toilets.add(document.toObject(Toilet.class));
+                            }
+                        }
+                        else if(!roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                            if(roomFilter.equals(document.get("roomType")) && toiletFilter.equals(document.get("toiletType"))) {
+                                toilets.add(document.toObject(Toilet.class));
+                            }
+                        }
                     }
                     Log.d(TAG, "onComplete: Found documents");
                     toiletListAdapter.setToilets(toilets);
@@ -83,7 +110,24 @@ public class ListFragment extends Fragment {
                     ArrayList<Toilet> toilets = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()){
                         Log.d(TAG, document.getId() + " => " + document.getData());
-                        toilets.add(document.toObject(Toilet.class));
+                        if(roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
+                            toilets.add(document.toObject(Toilet.class));
+                        }
+                        else if(!roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
+                            if(roomFilter.equals(document.get("roomType"))) {
+                                toilets.add(document.toObject(Toilet.class));
+                            }
+                        }
+                        else if(roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                            if(toiletFilter.equals(document.get("toiletType"))) {
+                                toilets.add(document.toObject(Toilet.class));
+                            }
+                        }
+                        else if(!roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
+                            if(roomFilter.equals(document.get("roomType")) && toiletFilter.equals(document.get("toiletType"))) {
+                                toilets.add(document.toObject(Toilet.class));
+                            }
+                        }
                     }
                     Log.d(TAG, "onComplete: Found documents");
                     toiletListAdapter.setToilets(toilets);

@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -27,10 +28,18 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +47,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -76,6 +86,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,10 +101,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private NavigationView navView;
     private Toolbar menuToolbar;
     private Switch fragmentSwitch;
+    private ImageButton filterButton;
 
     private PermissionsManager permissionsManager;
     private MapboxMap globalMap;
     private Style globalStyle;
+
+    private String roomFilter = "All Rooms";
+    private String toiletFilter = "All Toilets";
+    private float ratingFilter = 0;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -155,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -186,6 +201,65 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View view) {
                 isMapView = fragmentSwitch.isChecked();
                 switchFragment(savedInstanceState);
+            }
+        });
+
+        filterButton = (ImageButton) findViewById(R.id.filterButton);
+        filterButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Dialog dialog = new Dialog(MainActivity.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setCancelable(true);
+                dialog.setContentView(R.layout.filter_toilet_dialog);
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                Spinner spinnerRoom = dialog.findViewById(R.id.spinnerRoom);
+                spinnerRoom.setSelection(getRoomFilterId(roomFilter));
+                Spinner spinnerToilet = dialog.findViewById(R.id.spinnerToilet);
+                spinnerToilet.setSelection(getToiletFilterId(toiletFilter));
+                SeekBar seekRating = dialog.findViewById(R.id.seekRating);
+                TextView curRating = dialog.findViewById(R.id.curRating);
+                curRating.setText(Integer.toString((int) ratingFilter));
+                Button btnCancel = dialog.findViewById(R.id.btnCancelFilter);
+                Button btnApply = dialog.findViewById(R.id.btnApplyFilter);
+
+                dialog.show();
+
+                seekRating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        curRating.setText(Integer.toString(progress));
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btnApply.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String roomType = spinnerRoom.getSelectedItem().toString();
+                        String toiletType = spinnerToilet.getSelectedItem().toString();
+                        float minRating = seekRating.getProgress();
+                        roomFilter = roomType;
+                        toiletFilter = toiletType;
+                        ratingFilter = minRating;
+                        switchFragment(savedInstanceState);
+                        dialog.dismiss();
+                    }
+                });
             }
         });
     }
@@ -334,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         else {
             ((Switch) findViewById(R.id.fragmentSwitch)).setText("List View");
-            ListFragment listFragment = new ListFragment();
+            ListFragment listFragment = new ListFragment(roomFilter, toiletFilter, ratingFilter);
             FragmentManager manager = getSupportFragmentManager();
             manager.beginTransaction()
                     .replace(R.id.fragmentHolder, listFragment, listFragment.getTag())
@@ -355,6 +429,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
         }
+    }
+
+    public int getRoomFilterId(String roomString) {
+        int id = 0;
+        switch(roomString) {
+            case "All Rooms": id = 0; break;
+            case "Female": id = 1; break;
+            case "Male": id = 2; break;
+            case "Ungendered": id = 3; break;
+        }
+        return id;
+    }
+
+    public int getToiletFilterId(String toiletString) {
+        int id = 0;
+        switch(toiletString) {
+            case "All Toilets": id = 0; break;
+            case "Flushing Toilet": id = 1; break;
+            case "One-Piece Toilet": id = 2; break;
+            case "Two-Piece Toilet": id = 3; break;
+            case "Upflush Toilet": id = 4; break;
+            case "Small Compact Toilet": id = 5; break;
+            case "Corner Toilet": id = 6; break;
+            case "Wall Mounted Toilet": id = 7; break;
+            case "Square Toilet": id = 8; break;
+            case "Elongated Toilet": id = 9; break;
+            case "Round Bowl Toilet": id = 10; break;
+            case "Tankless Toilet": id = 11; break;
+            case "Composting Toilet": id = 12; break;
+            case "Portable Toilet": id = 13; break;
+            case "Pressure-Assisted Toilet": id = 14; break;
+            case "Gravity Toilet": id = 15; break;
+            case "Touchless Toilet": id = 16; break;
+            case "Pull Chain Toilet": id = 17; break;
+            case "Water-Saving Toilet": id = 18; break;
+            case "Dual-Flush Toilet": id = 19; break;
+            case "Comfort Height Toilet": id = 20; break;
+            case "Expensive Toilet": id = 21; break;
+        }
+        return id;
     }
 
     @Override
