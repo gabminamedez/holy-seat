@@ -6,53 +6,33 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
-import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.JsonElement;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
@@ -60,42 +40,28 @@ import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
-import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.SupportMapFragment;
-import com.mapbox.mapboxsdk.plugins.annotation.OnSymbolClickListener;
-import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
-import com.mobdeve.s15.holyseat.ListFragment;
-import com.mobdeve.s15.holyseat.LoginActivity;
-import com.mobdeve.s15.holyseat.ProfileActivity;
-import com.mobdeve.s15.holyseat.R;
-import com.mobdeve.s15.holyseat.ReviewAddActivity;
-import com.mobdeve.s15.holyseat.ToiletActivity;
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class NearestToiletsActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
 
@@ -107,6 +73,7 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
     private PermissionsManager permissionsManager;
     private MapboxMap globalMap;
     private Style globalStyle;
+    private SupportMapFragment mapFragment;
 
     private ImageButton backButton;
 
@@ -136,7 +103,6 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
 
     @SuppressWarnings( {"MissingPermission"})
     public void loadMapFragment(Bundle savedInstanceState) {
-        SupportMapFragment mapFragment;
         if(savedInstanceState == null) {
             final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -211,6 +177,15 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
                                     public void onStyleLoaded(@NonNull Style style) {
                                         globalStyle = style;
                                         enableLocation(mapboxMap, style);
+
+                                        Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
+                                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                                .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+                                                .zoom(15)
+                                                .build();
+                                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                                        mapboxMap.getUiSettings().setZoomGesturesEnabled(false);
+                                        mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
                                     }
                                 });
 

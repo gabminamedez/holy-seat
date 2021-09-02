@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -54,6 +55,7 @@ import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -356,6 +358,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             public void onStyleLoaded(@NonNull Style style) {
                                                 globalStyle = style;
                                                 enableLocation(mapboxMap, style);
+
+                                                Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
+                                                CameraPosition cameraPosition = new CameraPosition.Builder()
+                                                        .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+                                                        .zoom(12)
+                                                        .build();
+                                                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                                             }
                                     });
 
