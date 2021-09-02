@@ -5,25 +5,35 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ToiletActivity extends AppCompatActivity {
 
@@ -44,6 +54,8 @@ public class ToiletActivity extends AppCompatActivity {
     private ReviewAdapter reviewAdapter;
 
     private FirebaseFirestore db;
+
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,15 +80,112 @@ public class ToiletActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+
         Intent i = getIntent();
         String toiletRefString = i.getStringExtra(TOILET_KEY);
-
-        DocumentReference toiletRef = db.collection("Toilets").document(toiletRefString);
 
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+
+        btnCheckIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DocumentReference toiletRef = db.collection("Toilets").document(toiletRefString);
+                toiletRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String checkInToiletId = documentSnapshot.getId();
+                        String checkInToiletName = documentSnapshot.getString("location");
+
+                        DocumentReference profileRef = db.collection("Users").document(sp.getString(ProfileActivity.PROFILE_KEY,""));
+                        profileRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        User user = document.toObject(User.class);
+                                        Map<String, Object> checkin = new HashMap<>();
+                                        checkin.put("userID", db.document("Users/" + user.getId()));
+                                        checkin.put("userName", user.getDisplayName());
+                                        checkin.put("toiletID", db.document("Toilets/" + checkInToiletId));
+                                        checkin.put("toiletLocation", checkInToiletName);
+                                        checkin.put("checked", FieldValue.serverTimestamp());
+                                        db.collection("Check Ins")
+                                                .add(checkin)
+                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                    @Override
+                                                    public void onSuccess(DocumentReference documentReference) {
+                                                        Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+
+                                                        Dialog dialog2 = new Dialog(ToiletActivity.this);
+                                                        dialog2.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                                        dialog2.setCancelable(true);
+                                                        dialog2.setContentView(R.layout.checkin_dialog);
+                                                        dialog2.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                                        Button btnCancel = dialog2.findViewById(R.id.btnCancel);
+                                                        Button btnCheckInAddReview = dialog2.findViewById(R.id.btnCheckinAddReview);
+                                                        dialog2.show();
+
+                                                        btnCancel.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                dialog2.dismiss();
+                                                            }
+                                                        });
+                                                        btnCheckInAddReview.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View v) {
+                                                                Intent intent = new Intent(ToiletActivity.this, ReviewAddActivity.class);
+                                                                intent.putExtra(ToiletActivity.TOILET_KEY, toiletRefString);
+                                                                startActivity(intent);
+                                                                dialog2.dismiss();
+                                                            }
+                                                        });
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error adding checkin", e);
+                                                    }
+                                                });
+                                        Log.d(TAG, "onComplete: done loading");
+                                    } else {
+                                        Log.d(TAG, "No such document");
+                                    }
+                                } else {
+                                    Log.d(TAG, "get failed with ", task.getException());
+                                }
+
+                                db.collection("Toilets").document(checkInToiletId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        DocumentReference toilet = documentSnapshot.getReference();
+                                        toilet.update("numCheckins", FieldValue.increment(1))
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d(TAG, "numReviews incremented.");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error updating document", e);
+                                                    }
+                                                });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             }
         });
 
