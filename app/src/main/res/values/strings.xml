@@ -62,6 +62,39 @@
     <string name="no_thanks">No thanks</string>
     <string name="view_toilet_details">View Toilet Details</string>
     <string name="filter_toilet">Filter Toilets</string>
-    <string name="zero">0</string>
-    <string name="one_hundred">100</string>
+    <string name="min_rating">0</string>
+    <string name="max_rating">5</string>
+    <string-array name="roomTypeItems">
+        <item>All Rooms</item>
+        <item>Female</item>
+        <item>Male</item>
+        <item>Ungendered</item>
+    </string-array>
+    <string-array name="toiletTypeItems">
+        <item>All Toilets</item>
+        <item>Flushing Toilet</item>
+        <item>One-Piece Toilet</item>
+        <item>Two-Piece Toilet</item>
+        <item>Upflush Toilet</item>
+        <item>Small Compact Toilet</item>
+        <item>Corner Toilet</item>
+        <item>Wall Mounted Toilet</item>
+        <item>Square Toilet</item>
+        <item>Elongated Toilet</item>
+        <item>Round Bowl Toilet</item>
+        <item>Tankless Toilet</item>
+        <item>Composting Toilet</item>
+        <item>Portable Toilet</item>
+        <item>Pressure-Assisted Toilet</item>
+        <item>Gravity Toilet</item>
+        <item>Touchless Toilet Toilet</item>
+        <item>Pull Chain Toilet</item>
+        <item>Water-Saving Toilet</item>
+        <item>Dual-Flush Toilet</item>
+        <item>Comfort Height Toilet</item>
+        <item>Expensive Toilet</item>
+    </string-array>
+    <string name="filter_room_label">Room Type</string>
+    <string name="filter_toilet_label">Toilet Type</string>
+    <string name="filter_rating_label">Minimum Average Rating</string>
 </resources>

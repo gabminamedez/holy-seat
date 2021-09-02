@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/backMapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#FFFFFF"
@@ -16,7 +16,7 @@
         android:id="@+id/toiletMapDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imageButton"
+        android:layout_below="@id/backMapButton"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal">
 
@@ -35,7 +35,7 @@
 
             <TextView
                 android:id="@+id/toiletMapName"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/rambla_bold"
                 android:textColor="@color/midnight"
@@ -48,7 +48,7 @@
 
                 <TextView
                     android:id="@+id/toiletMapRoom"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:fontFamily="@font/lato" />
@@ -75,10 +75,10 @@
                 <RatingBar
                     android:id="@+id/ratingBar"
                     style="@style/Widget.AppCompat.RatingBar.Small"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:max="1"
-                    android:numStars="1"
+                    android:max="5"
+                    android:numStars="5"
                     android:progressTint="@color/cerulean"
                     android:rating="1" />
             </LinearLayout>

@@ -12,6 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,6 +33,7 @@ public class ReviewEditActivity extends AppCompatActivity {
     private RatingBar editRating;
     private TextInputEditText editReviewDetails;
     private Button editButton;
+    private TextView reviewEditLabel;
 
     private FirebaseFirestore db;
 
@@ -44,12 +46,22 @@ public class ReviewEditActivity extends AppCompatActivity {
         editRating = findViewById(R.id.editRating);
         editReviewDetails = findViewById(R.id.editReviewDetails);
         editButton = findViewById(R.id.editButton);
+        reviewEditLabel = findViewById(R.id.reviewEditLabel);
 
         db = FirebaseFirestore.getInstance();
 
-
         Intent i = getIntent();
         String reviewRefString = i.getStringExtra(ReviewActivity.REVIEW_KEY);
+        String toiletRefString = i.getStringExtra("TOILET_KEY");
+
+        db.collection("Toilets").document(toiletRefString).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Toilet toilet = documentSnapshot.toObject(Toilet.class);
+                reviewEditLabel.setText("Edit Review for " + toilet.getLocation());
+
+            }
+        });
 
         db.collection("Reviews").document(reviewRefString).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
