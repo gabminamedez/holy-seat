@@ -97,4 +97,5 @@
     <string name="filter_room_label">Room Type</string>
     <string name="filter_toilet_label">Toilet Type</string>
     <string name="filter_rating_label">Minimum Average Rating</string>
+    <string name="nearest_toilets_label">Toilets Near You</string>
 </resources>
