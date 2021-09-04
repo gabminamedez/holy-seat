@@ -32,9 +32,10 @@
             android:layout_height="wrap_content"
             android:max="5"
             android:numStars="5"
-            android:progressBackgroundTint="@color/grey"
+            android:progressBackgroundTintMode="add"
             android:progressTint="@color/cerulean"
             android:rating="3.5"
+            android:secondaryProgressTint="@color/charcoal"
             android:stepSize="1" />
 
         <LinearLayout
@@ -65,9 +66,17 @@
         android:id="@+id/toiletReviewDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:fontFamily="@font/lato"
         android:text="TextView"
         android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/toiletReviewImg"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:scaleType="fitXY"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/toiletReviewDate"

@@ -1,6 +1,8 @@
 package com.mobdeve.s15.holyseat;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +12,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 
 public class ToiletListAdapter extends RecyclerView.Adapter<ToiletListAdapter.MyViewHolder> {
     private ArrayList<Toilet> toilets;
+
+    StorageReference storage = FirebaseStorage.getInstance().getReference();
     public ToiletListAdapter() {
         this.toilets = new ArrayList<>();
     }
@@ -69,7 +79,20 @@ public class ToiletListAdapter extends RecyclerView.Adapter<ToiletListAdapter.My
             this.toiletListToiletType.setText(toilet.getToiletType());
             this.toiletListReviews.setText(String.valueOf(toilet.getNumReviews()));
             this.toiletListCheckins.setText(String.valueOf(toilet.getNumCheckins()));
+            if (!toilet.getImageUri().isEmpty()){
+                String path = "toilet_images/" + Uri.parse(toilet.getImageUri()).getLastPathSegment();
+                storage.child(path).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful())
+                            Picasso.get()
+                                    .load(task.getResult())
+                                    .error(R.drawable.ic_error_foreground)
+                                    .into(toiletListImg);
+                    }
 
+                });
+            }
         }
     }
 }

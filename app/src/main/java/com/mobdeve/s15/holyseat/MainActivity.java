@@ -22,6 +22,7 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -31,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -48,6 +50,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
@@ -69,6 +73,7 @@ import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.squareup.picasso.Picasso;
 
 
 import org.json.JSONArray;
@@ -102,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private StorageReference storage = FirebaseStorage.getInstance().getReference();
     private String profileRefString;
 
     private Boolean isMapView = false;
@@ -411,12 +417,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                                     toiletMapRoom.setText(document.getString("roomType"));
                                                                     TextView toiletMapType = dialog.findViewById(R.id.toiletMapType);
                                                                     toiletMapType.setText(document.getString("toiletType"));
-                                                                    RatingBar ratingBar = dialog.findViewById(R.id.ratingBar);
+                                                                    RatingBar ratingBar = dialog.findViewById(R.id.toiletMapRating);
                                                                     ratingBar.setRating(document.getDouble("avgRating").floatValue());
                                                                     Button toiletMapCheckin = dialog.findViewById(R.id.toiletMapCheckin);
                                                                     Button toiletMapAddReview = dialog.findViewById(R.id.toiletMapAddReview);
                                                                     Button toiletMapToilet = dialog.findViewById(R.id.toiletMapToilet);
                                                                     ImageButton backMapButton = dialog.findViewById(R.id.backMapButton);
+                                                                    ImageView toiletMapImg = dialog.findViewById(R.id.toiletMapImg);
+
+                                                                    if (!document.getString("imageUri").isEmpty()){
+                                                                        String path = "toilet_images/" + Uri.parse(document.getString("imageUri")).getLastPathSegment();
+                                                                        storage.child(path).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Uri> task) {
+                                                                                if (task.isSuccessful())
+                                                                                    Picasso.get()
+                                                                                            .load(task.getResult())
+                                                                                            .error(R.drawable.ic_error_foreground)
+                                                                                            .into(toiletMapImg);
+                                                                            }
+
+                                                                        });
+                                                                    }
 
                                                                     dialog.show();
 

@@ -148,7 +148,6 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         DocumentReference profileRef = db.collection("Users").document(profileRefString);
         if (!sp.getString(ProfileActivity.PROFILE_KEY, "").equals(profileRefString))
             btnEditProfile.setVisibility(View.INVISIBLE);
-        System.out.println(sp.getString(ProfileActivity.PROFILE_KEY, "") + profileRefString);
 
         profileRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

@@ -93,6 +93,8 @@
                 android:layout_marginTop="5dp"
                 android:backgroundTint="@color/cerulean"
                 android:fontFamily="@font/rambla_bold"
+                android:minWidth="60dip"
+                android:minHeight="30dip"
                 android:text="@string/edit_profile_button"
                 android:textAllCaps="false"
                 android:textSize="14sp" />

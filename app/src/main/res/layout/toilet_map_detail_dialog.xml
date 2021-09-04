@@ -9,7 +9,7 @@
         android:id="@+id/backMapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#FFFFFF"
+        android:backgroundTint="@color/off_white"
         app:srcCompat="@drawable/ic_baseline_arrow_back_black_24" />
 
     <LinearLayout
@@ -18,13 +18,15 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/backMapButton"
         android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/toiletMapImg"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_weight="1"
+            android:scaleType="fitXY"
             tools:srcCompat="@tools:sample/avatars" />
 
         <LinearLayout
@@ -65,20 +67,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/toiletMapRating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:fontFamily="@font/lato" />
-
                 <RatingBar
-                    android:id="@+id/ratingBar"
+                    android:id="@+id/toiletMapRating"
                     style="@style/Widget.AppCompat.RatingBar.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:max="5"
                     android:numStars="5"
+                    android:progressBackgroundTint="@color/charcoal"
                     android:progressTint="@color/cerulean"
                     android:rating="1" />
             </LinearLayout>
@@ -94,6 +90,8 @@
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/cerulean"
         android:fontFamily="@font/rambla_bold"
+        android:minWidth="60dip"
+        android:minHeight="30dip"
         android:text="@string/check_in_button"
         android:textAllCaps="false"
         android:textSize="14sp" />
@@ -106,6 +104,8 @@
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/cerulean"
         android:fontFamily="@font/rambla_bold"
+        android:minWidth="60dip"
+        android:minHeight="30dip"
         android:text="@string/add_review_button"
         android:textAllCaps="false"
         android:textSize="14sp" />
@@ -118,6 +118,8 @@
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/cerulean"
         android:fontFamily="@font/rambla_bold"
+        android:minWidth="60dip"
+        android:minHeight="30dip"
         android:text="@string/view_toilet_details"
         android:textAllCaps="false"
         android:textSize="14sp" />
