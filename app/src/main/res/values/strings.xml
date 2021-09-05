@@ -14,6 +14,7 @@
     <string name="date_posted">Date Posted:</string>
     <string name="edit_review">Edit Review</string>
     <string name="delete_review">Delete Review</string>
+    <string name="clear_image">Clear</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>

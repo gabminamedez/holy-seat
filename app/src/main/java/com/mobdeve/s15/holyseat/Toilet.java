@@ -12,13 +12,13 @@ public class Toilet {
     private double avgRating;
     private double longitude;
     private double latitude;
-    private String image;
     private @ServerTimestamp Date created;
     private String location;
     private long numCheckins;
     private long numReviews;
     private String roomType;
     private String toiletType;
+    private String imageUri;
 
     public Toilet(){
 
@@ -31,7 +31,6 @@ public class Toilet {
                 ", avgRating=" + avgRating +
                 ", longitude=" + longitude +
                 ", latitude=" + latitude +
-                ", image='" + image + '\'' +
                 ", created=" + created +
                 ", location='" + location + '\'' +
                 ", numCheckins=" + numCheckins +
@@ -39,6 +38,14 @@ public class Toilet {
                 ", roomType='" + roomType + '\'' +
                 ", toiletType='" + toiletType + '\'' +
                 '}';
+    }
+
+    public String getImageUri() {
+        return imageUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 
     public String getId() {
@@ -71,14 +78,6 @@ public class Toilet {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public Date getCreated() {

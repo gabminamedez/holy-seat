@@ -1,7 +1,7 @@
 package com.mobdeve.s15.holyseat;
 
 import android.content.Intent;
-import android.media.Rating;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,6 +27,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
     private final String TAG = "ReviewAdapter";
 
     private ArrayList<Review> reviews;
+
+    StorageReference storage = FirebaseStorage.getInstance().getReference();
     public ReviewAdapter() {
         this.reviews = new ArrayList<>();
     }
@@ -60,6 +68,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView toiletReviewUser, toiletReviewUpvotes, toiletReviewDetails, toiletReviewDate;
         private RatingBar toiletReviewRating;
+        private ImageView toiletReviewImg;
         public MyViewHolder(View itemView) {
             super(itemView);
             this.toiletReviewUser = itemView.findViewById(R.id.toiletReviewUser);
@@ -67,6 +76,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
             this.toiletReviewDetails = itemView.findViewById(R.id.toiletReviewDetails);
             this.toiletReviewDate = itemView.findViewById(R.id.toiletReviewDate);
             this.toiletReviewRating = itemView.findViewById(R.id.toiletReviewRating);
+            this.toiletReviewImg = itemView.findViewById(R.id.toiletReviewImg);
             toiletReviewUser.setOnClickListener(this);
         }
         public void bind(Review review) {
@@ -75,6 +85,25 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
             this.toiletReviewDetails.setText(review.getDetails());
             this.toiletReviewDate.setText(review.getPostedString());
             this.toiletReviewRating.setRating(review.getRating());
+            if (!review.getImageUri().isEmpty()){
+                Log.d("here", "bind: go through here " + review.getImageUri());
+                String path = "review_images/" + review.getToiletID().getId() + "-" + Uri.parse(review.getImageUri()).getLastPathSegment();
+                storage.child(path).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful())
+                            Log.d("here", "bind: how about through here " + task.getResult().toString());
+                            Picasso.get()
+                                    .load(task.getResult())
+                                    .error(R.drawable.ic_error_foreground)
+                                    .into(toiletReviewImg);
+                    }
+
+                });
+            }
+            else{
+                toiletReviewImg.setVisibility(View.GONE);
+            }
         }
 
         @Override

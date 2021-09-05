@@ -139,6 +139,8 @@
             android:layout_marginBottom="32dp"
             android:backgroundTint="@color/red"
             android:fontFamily="@font/rambla_bold"
+            android:minWidth="60dip"
+            android:minHeight="30dip"
             android:text="@string/cancel"
             android:textAllCaps="false" />
 
@@ -152,6 +154,8 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/cerulean"
             android:fontFamily="@font/rambla_bold"
+            android:minWidth="60dip"
+            android:minHeight="30dip"
             android:text="@string/apply"
             android:textAllCaps="false" />
 

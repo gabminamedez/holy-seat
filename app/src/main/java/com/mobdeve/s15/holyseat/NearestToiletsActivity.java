@@ -232,7 +232,7 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
                                                                 toiletMapRoom.setText(document.getString("roomType"));
                                                                 TextView toiletMapType = dialog.findViewById(R.id.toiletMapType);
                                                                 toiletMapType.setText(document.getString("toiletType"));
-                                                                RatingBar ratingBar = dialog.findViewById(R.id.ratingBar);
+                                                                RatingBar ratingBar = dialog.findViewById(R.id.toiletMapRating);
                                                                 ratingBar.setRating(document.getDouble("avgRating").floatValue());
                                                                 Button toiletMapCheckin = dialog.findViewById(R.id.toiletMapCheckin);
                                                                 Button toiletMapAddReview = dialog.findViewById(R.id.toiletMapAddReview);

@@ -1,11 +1,18 @@
 package com.mobdeve.s15.holyseat;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,9 +29,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+
+import io.grpc.Context;
 
 public class ToiletActivity extends AppCompatActivity {
 
@@ -44,6 +57,8 @@ public class ToiletActivity extends AppCompatActivity {
     private ReviewAdapter reviewAdapter;
 
     private FirebaseFirestore db;
+
+    private StorageReference storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +82,8 @@ public class ToiletActivity extends AppCompatActivity {
         this.recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
 
         db = FirebaseFirestore.getInstance();
+
+        storage = FirebaseStorage.getInstance().getReference();
 
         Intent i = getIntent();
         String toiletRefString = i.getStringExtra(TOILET_KEY);
@@ -95,13 +112,26 @@ public class ToiletActivity extends AppCompatActivity {
 //                    DocumentSnapshot document = task.getResult();
 //                    if (document.exists()) {
 //                        Toilet toilet = document.toObject(Toilet.class);
-////                        toiletImg
 //                        toiletName.setText(toilet.getLocation());
 //                        roomType.setText(toilet.getRoomType());
 //                        toiletType.setText(toilet.getToiletType());
 //                        toiletRating.setText(String.valueOf(toilet.getAvgRating()));
 //                        toiletReviews.setText(String.valueOf(toilet.getNumReviews()));
 //                        toiletCheckins.setText(String.valueOf(toilet.getNumCheckins()));
+//                        if (!toilet.getImageUri().isEmpty()){
+//                            String path = "toilet_images/" + Uri.parse(toilet.getImageUri()).getLastPathSegment();
+//                            storage.child(path).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Uri> task) {
+//                                    if (task.isSuccessful())
+//                                        Picasso.get()
+//                                                .load(task.getResult())
+//                                                .error(R.drawable.ic_error_foreground)
+//                                                .into(toiletImg);
+//                                }
+//
+//                            });
+//                        }
 //                    } else {
 //                        Log.d(TAG, "No such document");
 //                    }
@@ -153,13 +183,26 @@ public class ToiletActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Toilet toilet = document.toObject(Toilet.class);
-//                        toiletImg
                         toiletName.setText(toilet.getLocation());
                         roomType.setText(toilet.getRoomType());
                         toiletType.setText(toilet.getToiletType());
                         toiletRating.setText(String.valueOf(toilet.getAvgRating()));
                         toiletReviews.setText(String.valueOf(toilet.getNumReviews()));
                         toiletCheckins.setText(String.valueOf(toilet.getNumCheckins()));
+                        if (!toilet.getImageUri().isEmpty()){
+                            String path = "toilet_images/" + Uri.parse(toilet.getImageUri()).getLastPathSegment();
+                            storage.child(path).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful())
+                                        Picasso.get()
+                                                .load(task.getResult())
+                                                .error(R.drawable.ic_error_foreground)
+                                                .into(toiletImg);
+                                }
+
+                            });
+                        }
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -185,5 +228,12 @@ public class ToiletActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK){
+            reviewAdapter.notifyDataSetChanged();
+        }
     }
 }
