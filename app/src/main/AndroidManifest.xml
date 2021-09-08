@@ -15,6 +15,9 @@
             android:name=".NearestToiletsActivity"
             android:exported="true" />
         <activity
+            android:name=".CredentialsEditActivity"
+            android:exported="true" />
+        <activity
             android:name=".ReviewActivity"
             android:exported="true" />
         <activity
