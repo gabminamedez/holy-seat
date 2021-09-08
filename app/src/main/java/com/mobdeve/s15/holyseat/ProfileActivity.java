@@ -43,7 +43,6 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
     private static final String[] paths = {"All Activities", "Reviews", "Check-ins"};
 
     private ImageButton backButton;
-    private ImageView profileImg;
     private TextView profileName;
     private TextView profileUser;
     private TextView profileReviews;
@@ -170,6 +169,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                 }
             }
         });
+        profileAdapter.notifyDataSetChanged();
         db.collection("Check Ins").whereEqualTo("userID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
