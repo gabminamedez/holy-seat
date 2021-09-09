@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -90,6 +92,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView toiletReviewUser, toiletReviewUpvotes, toiletReviewDetails, toiletReviewDate;
         private RatingBar toiletReviewRating;
+        private ImageView toiletReviewImg;
         public MyViewHolder(View itemView) {
             super(itemView);
             this.toiletReviewUser = itemView.findViewById(R.id.toiletReviewUser);
@@ -97,6 +100,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
             this.toiletReviewDetails = itemView.findViewById(R.id.toiletReviewDetails);
             this.toiletReviewDate = itemView.findViewById(R.id.toiletReviewDate);
             this.toiletReviewRating = itemView.findViewById(R.id.toiletReviewRating);
+            this.toiletReviewImg = itemView.findViewById(R.id.toiletReviewImg);
             toiletReviewUser.setOnClickListener(this);
         }
         public void bind(Review review) {

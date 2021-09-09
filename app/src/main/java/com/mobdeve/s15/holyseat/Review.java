@@ -21,6 +21,7 @@ public class Review extends Activity{
     private String reviewerName;
     private DocumentReference toiletID;
     private String toiletLocation;
+    private String imageUri;
 
     public Review(){
 
@@ -104,6 +105,14 @@ public class Review extends Activity{
 
     public void setToiletID(DocumentReference toiletID) {
         this.toiletID = toiletID;
+    }
+
+    public String getImageUri() {
+        return imageUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 
     @Override

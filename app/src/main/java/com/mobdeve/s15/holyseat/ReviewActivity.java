@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -26,6 +27,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,12 +47,15 @@ public class ReviewActivity extends AppCompatActivity {
     private TextView reviewDetails;
     private RatingBar reviewRating;
     private TextView reviewDate;
+    private ImageView reviewReviewImg;
     private Button btnEditReview;
     private Button btnDeleteReview;
 
     private SharedPreferences sp;
 
     private FirebaseFirestore db;
+
+    private StorageReference storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +71,11 @@ public class ReviewActivity extends AppCompatActivity {
         this.btnEditReview = findViewById(R.id.btnEditReview);
         this.btnDeleteReview = findViewById(R.id.btnDeleteReview);
         this.reviewDate = findViewById(R.id.reviewDate);
+        this.reviewReviewImg = findViewById(R.id.reviewReviewImg);
 
         db = FirebaseFirestore.getInstance();
+
+        storage = FirebaseStorage.getInstance().getReference();
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -217,12 +227,27 @@ public class ReviewActivity extends AppCompatActivity {
                                 v.getContext().startActivity(i);
                             }
                         });
+                        if (!review.getImageUri().isEmpty()){
+                            String path = "review_images/" + review.getToiletID().getId() + "-" + Uri.parse(review.getImageUri()).getLastPathSegment();
+                            storage.child(path).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful())
+                                        Picasso.get()
+                                                .load(task.getResult())
+                                                .error(R.drawable.ic_error_foreground)
+                                                .into(reviewReviewImg);
+                                }
+                            });
+                        }
+                        else{
+                            reviewReviewImg.setVisibility(View.GONE);
+                        }
 
                         if (!sp.getString(ProfileActivity.PROFILE_KEY, "").equals(review.getReviewerID().getId())){
                             btnEditReview.setVisibility(View.INVISIBLE);
                             btnDeleteReview.setVisibility(View.INVISIBLE);
                         }
-                        System.out.println(sp.getString(ProfileActivity.PROFILE_KEY, "") + review.getReviewerID().getId());
                     } else {
                         Log.d(TAG, "No such document");
                     }
