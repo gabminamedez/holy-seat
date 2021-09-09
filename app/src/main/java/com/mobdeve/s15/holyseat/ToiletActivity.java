@@ -62,7 +62,7 @@ public class ToiletActivity extends AppCompatActivity {
         this.btnAddReview = findViewById(R.id.btnAddReview);
         this.recyclerReviews = findViewById(R.id.recyclerReviews);
 
-        this.reviewAdapter = new ReviewAdapter();
+        this.reviewAdapter = new ReviewAdapter(this);
         this.recyclerReviews.setAdapter(reviewAdapter);
         this.recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
 

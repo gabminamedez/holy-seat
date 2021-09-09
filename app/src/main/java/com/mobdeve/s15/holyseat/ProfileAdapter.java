@@ -76,14 +76,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == 0) {
-            Log.d(TAG, "onBindViewHolderb: " + holder.getItemViewType() + position);
             ReviewViewHolder viewHolder = (ReviewViewHolder) holder;
             ((ReviewViewHolder) viewHolder).bindReview((Review) activities.get(position));
         }
         else{
-            Log.d(TAG, "onBindViewHolderc: " + holder.getItemViewType() + position);
             CheckInViewHolder viewHolder = (CheckInViewHolder) holder;
-            Log.d(TAG, "onBindViewHolder: " + activities.get(position).toString());
             ((CheckInViewHolder) viewHolder).bindCheckIn((CheckIn) activities.get(position));
         }
     }
