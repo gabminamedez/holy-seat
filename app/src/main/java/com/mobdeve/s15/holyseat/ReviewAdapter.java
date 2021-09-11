@@ -2,6 +2,7 @@ package com.mobdeve.s15.holyseat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.media.Rating;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -93,6 +96,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
         private TextView toiletReviewUser, toiletReviewUpvotes, toiletReviewDetails, toiletReviewDate;
         private RatingBar toiletReviewRating;
         private ImageView toiletReviewImg;
+        private ImageView toiletReviewUpvoted;
         public MyViewHolder(View itemView) {
             super(itemView);
             this.toiletReviewUser = itemView.findViewById(R.id.toiletReviewUser);
@@ -101,6 +105,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
             this.toiletReviewDate = itemView.findViewById(R.id.toiletReviewDate);
             this.toiletReviewRating = itemView.findViewById(R.id.toiletReviewRating);
             this.toiletReviewImg = itemView.findViewById(R.id.toiletReviewImg);
+            this.toiletReviewUpvoted = itemView.findViewById(R.id.toiletReviewUpvoted);
             toiletReviewUser.setOnClickListener(this);
         }
         public void bind(Review review) {
@@ -134,6 +139,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
                         System.out.println(task.getResult().size());
                         System.out.println(review.getId());
                         toiletReviewUpvotes.setText(String.valueOf(task.getResult().size()));
+                        toiletReviewUpvoted.setImageResource(R.drawable.ic_twotone_arrow_drop_up_24);
+                        ImageViewCompat.setImageTintList(toiletReviewUpvoted, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)));
                     }
                 }
             });
@@ -143,7 +150,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()){
                         if (!task.getResult().isEmpty()){
-                            toiletReviewUpvotes.setTextColor(Color.parseColor("#FF7557"));
+                            toiletReviewUpvotes.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red)));
+                            ImageViewCompat.setImageTintList(toiletReviewUpvoted, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red)));
                         }
                     }
                 }
@@ -169,7 +177,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
                                         db.collection("Upvotes").document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-                                                toiletReviewUpvotes.setTextColor(Color.parseColor("#909090"));
+                                                toiletReviewUpvotes.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)));
+                                                ImageViewCompat.setImageTintList(toiletReviewUpvoted, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)));
                                             }
                                         });
                                     }
@@ -183,7 +192,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
                                     db.collection("Upvotes").add(newUpvote).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                         @Override
                                         public void onSuccess(DocumentReference documentReference) {
-                                            toiletReviewUpvotes.setTextColor(Color.parseColor("#FF7557"));
+                                            toiletReviewUpvotes.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red)));
+                                            ImageViewCompat.setImageTintList(toiletReviewUpvoted, ColorStateList.valueOf(ContextCompat.getColor(context, R.color.red)));
                                         }
                                     });
                                 }

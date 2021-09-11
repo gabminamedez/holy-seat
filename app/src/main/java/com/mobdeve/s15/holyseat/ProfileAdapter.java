@@ -166,6 +166,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
+    public void clearActivities(){
+        this.activities = new ArrayList<>();
+        this.activitiesCopy = new ArrayList<>();
+    }
+
     public void filterAll(){
         this.activities = (ArrayList<Activity>) activitiesCopy.clone();
     }

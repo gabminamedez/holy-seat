@@ -46,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
     private TextView profileName;
     private TextView profileUser;
     private TextView profileReviews;
+    private TextView profileNone;
     private Button btnEditProfile;
     private Spinner spinner;
     private RecyclerView recyclerActivities;
@@ -63,6 +64,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         this.profileName = findViewById(R.id.profileName);
         this.profileUser = findViewById(R.id.profileUser);
         this.profileReviews = findViewById(R.id.profileReviews);
+        this.profileNone = findViewById(R.id.profileNone);
         this.btnEditProfile = findViewById(R.id.btnEditProfile);
         this.recyclerActivities = findViewById(R.id.recyclerActivities);
         this.spinner = findViewById(R.id.spinner);
@@ -97,7 +99,6 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                 Intent intent = new Intent(ProfileActivity.this, ProfileEditActivity.class);
                 intent.putExtra(ProfileEditActivity.PROFILE_KEY, profileRefString);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -117,6 +118,12 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
             }
             profileAdapter.filterReviews(reviews);
             recyclerActivities.setAdapter(profileAdapter);
+            if (profileAdapter.getItemCount() == 0){
+                profileNone.setText(R.string.no_activities_reviews);
+                profileNone.setVisibility(View.VISIBLE);
+            }else{
+                profileNone.setVisibility(View.GONE);
+            }
         }
         else if (parent.getItemAtPosition(position).equals("Check-ins")){
             ArrayList<CheckIn> checkIns = new ArrayList<>();
@@ -126,10 +133,22 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
             }
             profileAdapter.filterCheckIns(checkIns);
             recyclerActivities.setAdapter(profileAdapter);
+            if (profileAdapter.getItemCount() == 0){
+                profileNone.setText(R.string.no_activities_checkins);
+                profileNone.setVisibility(View.VISIBLE);
+            }else{
+                profileNone.setVisibility(View.GONE);
+            }
         }
         else{
             profileAdapter.filterAll();
             profileAdapter.notifyDataSetChanged();
+            if (profileAdapter.getItemCount() == 0){
+                profileNone.setText(R.string.no_activities);
+                profileNone.setVisibility(View.VISIBLE);
+            }else{
+                profileNone.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -155,12 +174,9 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         User user = document.toObject(User.class);
-//                        profileImg
                         profileName.setText(user.getDisplayName());
                         profileUser.setText("@" + user.getUsername());
                         profileReviews.setText(String.valueOf(user.getNumReviews()));
-//                        profileCheckins.setText();
-                        Log.d(TAG, "onComplete: done loading");
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -169,7 +185,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                 }
             }
         });
-        profileAdapter.notifyDataSetChanged();
+        profileAdapter.clearActivities();
         db.collection("Check Ins").whereEqualTo("userID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -180,29 +196,34 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                         Log.d(TAG, document.getId() + " => " + document.getData());
                     }
                     profileAdapter.addCheckInsAll(checkIns);
-                    profileAdapter.sortActivities();
-                    profileAdapter.notifyDataSetChanged();
+                    db.collection("Reviews").whereEqualTo("reviewerID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                ArrayList<Review> reviews = new ArrayList<>();
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    reviews.add(document.toObject(Review.class));
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                profileAdapter.addReviewsAll(reviews);
+                                profileAdapter.sortActivities();
+                                profileAdapter.notifyDataSetChanged();
+                                if (profileAdapter.getItemCount() == 0){
+                                    profileNone.setText(R.string.no_activities);
+                                    profileNone.setVisibility(View.VISIBLE);
+                                }else{
+                                    profileNone.setVisibility(View.GONE);
+                                }
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             }
         });
-        db.collection("Reviews").whereEqualTo("reviewerID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    ArrayList<Review> reviews = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        reviews.add(document.toObject(Review.class));
-                        Log.d(TAG, document.getId() + " => " + document.getData());
-                    }
-                    profileAdapter.addReviewsAll(reviews);
-                    profileAdapter.sortActivities();
-                    profileAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
+        spinner.setSelection(0);
     }
 }

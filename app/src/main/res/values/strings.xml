@@ -65,6 +65,10 @@
     <string name="filter_toilet">Filter Toilets</string>
     <string name="min_rating">0</string>
     <string name="max_rating">5</string>
+    <string name="no_reviews">No reviews have been posted.</string>
+    <string name="no_activities">No activities created yet.</string>
+    <string name="no_activities_reviews">No reviews created yet.</string>
+    <string name="no_activities_checkins">No check-ins created yet.</string>
     <string-array name="roomTypeItems">
         <item>All Rooms</item>
         <item>Female</item>
