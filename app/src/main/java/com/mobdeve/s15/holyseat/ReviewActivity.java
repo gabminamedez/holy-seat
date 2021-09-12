@@ -51,6 +51,8 @@ public class ReviewActivity extends AppCompatActivity {
     private Button btnEditReview;
     private Button btnDeleteReview;
 
+    private long curRating;
+
     private SharedPreferences sp;
 
     private FirebaseFirestore db;
@@ -151,6 +153,27 @@ public class ReviewActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 DocumentReference toilet = documentSnapshot.getReference();
+                                Double curAvg = documentSnapshot.getDouble("avgRating");
+                                Double curNumReviews = documentSnapshot.getDouble("numReviews");
+                                Double total = curAvg * curNumReviews - curRating;
+                                Double newNumReviews = curNumReviews - 1;
+                                Double result = total / newNumReviews;
+                                result = (double) Math.round(result * 10d) / 10d;
+
+                                toilet.update("avgRating", result)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "numReviews incremented.");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error updating document", e);
+                                            }
+                                        });
+
                                 toilet.update("numReviews", FieldValue.increment(-1))
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
@@ -218,6 +241,7 @@ public class ReviewActivity extends AppCompatActivity {
                         reviewReviewer.setText(review.getReviewerName());
                         reviewDetails.setText(review.getDetails());
                         reviewRating.setRating(review.getRating());
+                        curRating = review.getRating();
                         reviewDate.setText(review.getPostedString());
                         reviewReviewer.setOnClickListener(new View.OnClickListener() {
                             @Override

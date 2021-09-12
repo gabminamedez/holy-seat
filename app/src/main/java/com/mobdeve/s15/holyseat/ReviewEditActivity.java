@@ -59,6 +59,8 @@ public class ReviewEditActivity extends AppCompatActivity {
     private Button btnClearImg;
     private ConstraintLayout imageArea;
 
+    private long curRating;
+
     private Uri imageUri = null;
 
     private FirebaseFirestore db;
@@ -111,6 +113,7 @@ public class ReviewEditActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Review review = documentSnapshot.toObject(Review.class);
+                curRating = review.getRating();
                 editRating.setRating(review.getRating());
                 editReviewDetails.setText(review.getDetails());
                 if (!review.getImageUri().isEmpty()){
@@ -222,6 +225,34 @@ public class ReviewEditActivity extends AppCompatActivity {
                                         }
                                     });
                             Task t2 = db.collection("Reviews").document(reviewRefString).update(newReview);
+
+                            db.collection("Toilets").document(toiletRefString).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    DocumentReference toilet = documentSnapshot.getReference();
+                                    Double curAvg = documentSnapshot.getDouble("avgRating");
+                                    Double curNumReviews = documentSnapshot.getDouble("numReviews");
+                                    Double total = curAvg * curNumReviews - curRating;
+                                    total = total + rating;
+                                    Double result = total / curNumReviews;
+                                    result = (double) Math.round(result * 10d) / 10d;
+
+                                    toilet.update("avgRating", result)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d(TAG, "numReviews incremented.");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error updating document", e);
+                                                }
+                                            });
+                                }
+                            });
+
                             Tasks.whenAllSuccess(t1, t2)
                                     .addOnSuccessListener(new OnSuccessListener<List<Object>>() {
                                         @Override
@@ -247,6 +278,33 @@ public class ReviewEditActivity extends AppCompatActivity {
                             db.collection("Reviews").document(reviewRefString).update(newReview).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
+                                    db.collection("Toilets").document(toiletRefString).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            DocumentReference toilet = documentSnapshot.getReference();
+                                            Double curAvg = documentSnapshot.getDouble("avgRating");
+                                            Double curNumReviews = documentSnapshot.getDouble("numReviews");
+                                            Double total = curAvg * curNumReviews - curRating;
+                                            total = total + rating;
+                                            Double result = total / curNumReviews;
+                                            result = (double) Math.round(result * 10d) / 10d;
+
+                                            toilet.update("avgRating", result)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d(TAG, "numReviews incremented.");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error updating document", e);
+                                                        }
+                                                    });
+                                        }
+                                    });
+
                                     progressDialog.setCanceledOnTouchOutside(true);
                                     progressDialog.setMessage("Success!");
                                     progressDialog.dismiss();

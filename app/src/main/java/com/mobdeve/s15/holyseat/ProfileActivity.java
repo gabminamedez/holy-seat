@@ -70,16 +70,16 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         this.spinner = findViewById(R.id.spinner);
 
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(ProfileActivity.this,
-                android.R.layout.simple_spinner_dropdown_item,paths);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
-
-
-        this.profileAdapter = new ProfileAdapter();
-        this.recyclerActivities.setAdapter(profileAdapter);
-        this.recyclerActivities.setLayoutManager(new LinearLayoutManager(this));
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(ProfileActivity.this,
+//                android.R.layout.simple_spinner_dropdown_item,paths);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner.setAdapter(adapter);
+//        spinner.setOnItemSelectedListener(this);
+//
+//
+//        this.profileAdapter = new ProfileAdapter();
+//        this.recyclerActivities.setAdapter(profileAdapter);
+//        this.recyclerActivities.setLayoutManager(new LinearLayoutManager(this));
 
         Intent i = getIntent();
         String profileRefString = i.getStringExtra(PROFILE_KEY);
@@ -99,12 +99,12 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                 Intent intent = new Intent(ProfileActivity.this, ProfileEditActivity.class);
                 intent.putExtra(ProfileEditActivity.PROFILE_KEY, profileRefString);
                 startActivity(intent);
+                finish();
             }
         });
 
 
-        db = FirebaseFirestore.getInstance();
-
+//        db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -163,6 +163,7 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
 
         Intent i = getIntent();
         String profileRefString = i.getStringExtra(PROFILE_KEY);
+        db = FirebaseFirestore.getInstance();
         DocumentReference profileRef = db.collection("Users").document(profileRefString);
         if (!sp.getString(ProfileActivity.PROFILE_KEY, "").equals(profileRefString))
             btnEditProfile.setVisibility(View.INVISIBLE);
@@ -185,7 +186,18 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                 }
             }
         });
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(ProfileActivity.this,
+                android.R.layout.simple_spinner_dropdown_item,paths);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
+        this.profileAdapter = new ProfileAdapter();
+        this.recyclerActivities.setAdapter(profileAdapter);
+        this.recyclerActivities.setLayoutManager(new LinearLayoutManager(this));
         profileAdapter.clearActivities();
+
         db.collection("Check Ins").whereEqualTo("userID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -205,6 +217,8 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                                     reviews.add(document.toObject(Review.class));
                                     Log.d(TAG, document.getId() + " => " + document.getData());
                                 }
+                                profileAdapter.clearActivities();
+                                profileAdapter.addCheckInsAll(checkIns);
                                 profileAdapter.addReviewsAll(reviews);
                                 profileAdapter.sortActivities();
                                 profileAdapter.notifyDataSetChanged();
@@ -226,4 +240,5 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         });
         spinner.setSelection(0);
     }
+
 }

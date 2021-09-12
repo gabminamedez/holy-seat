@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -148,37 +149,42 @@ public class ProfileEditActivity extends AppCompatActivity {
                 }
 
                 if (isValid()) {
+                    final ProgressDialog progressDialog = new ProgressDialog(ProfileEditActivity.this);
+
                     db.document("Users/" + profileRefString)
                             .update("displayName", displayName,
                                     "username", userName)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                    db.collection("Check Ins").whereEqualTo("userID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                                    db.document("Check Ins/" + document.getId()).update("userName", displayName);
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        db.collection("Check Ins").whereEqualTo("userID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        db.document("Check Ins/" + document.getId()).update("userName", displayName);
+                                                    }
                                                 }
                                             }
-                                        }
-                                    });
-                                    db.collection("Reviews").whereEqualTo("reviewerID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                                    db.document("Reviews/" + document.getId()).update("reviewerName", displayName);
+                                        });
+                                        db.collection("Reviews").whereEqualTo("reviewerID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        db.document("Reviews/" + document.getId()).update("reviewerName", displayName);
+                                                    }
                                                 }
                                             }
-                                        }
-                                    });
-                                    Intent intent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
-                                    intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
-                                    startActivity(intent);
-                                    finish();
+                                        });
+
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                        Intent intent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
+                                        intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
+                                        startActivity(intent);
+                                        finish();
+                                    }
                                 }
                             });
                 }
