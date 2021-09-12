@@ -110,86 +110,124 @@ public class ProfileEditActivity extends AppCompatActivity {
                 String displayName = editName.getText().toString().trim();
                 String userName = editUsername.getText().toString().trim();
 
-                valid();
+                invalid();
 
                 if (displayName.isEmpty() || !isValidDisplay(displayName)) {
                     errorName.setVisibility(View.VISIBLE);
-                    invalid();
                 }
                 else {
                     errorName.setVisibility(View.GONE);
+                    valid();
                 }
 
                 if (userName.isEmpty() || userName.length() < 6 || !isValidUser(userName)){
                     errorUser.setVisibility(View.VISIBLE);
-                    invalid();
                 }
                 else {
                     db.collection("Users").whereEqualTo("username", userName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    if (!document.getString("username").equals(curUsername)) {
-                                        errorUser.setText(R.string.error_user_unique);
-                                        errorUser.setVisibility(View.VISIBLE);
-                                        invalid();
-                                        break;
-                                    }
-                                    else {
-                                        errorUser.setVisibility(View.GONE);
+                            if (task.isSuccessful()) {
+                                if (!task.getResult().isEmpty()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        if (document.getString("username").equals(curUsername)) {
+                                            errorUser.setVisibility(View.GONE);
+                                            valid();
+                                            if (isValid()) {
+                                                Log.d("YEET", "all good");
+                                                db.document("Users/" + profileRefString)
+                                                        .update("displayName", displayName,
+                                                                "username", userName)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    db.collection("Check Ins").whereEqualTo("userID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                    db.document("Check Ins/" + document.getId()).update("userName", displayName);
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                    db.collection("Reviews").whereEqualTo("reviewerID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                    db.document("Reviews/" + document.getId()).update("reviewerName", displayName);
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    });
+
+                                                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                                    Intent intent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
+                                                                    intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                }
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                        else {
+                                            errorUser.setText(R.string.error_user_unique);
+                                            errorUser.setVisibility(View.VISIBLE);
+                                            Log.d("YEET", "username not unique");
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            else {
-                                errorUser.setVisibility(View.GONE);
+                                else if (task.getResult().isEmpty()) {
+                                    errorUser.setVisibility(View.GONE);
+                                    valid();
+                                    if (isValid()) {
+                                        Log.d("YEET", "all good");
+                                        db.document("Users/" + profileRefString)
+                                                .update("displayName", displayName,
+                                                        "username", userName)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if(task.isSuccessful()){
+                                                            db.collection("Check Ins").whereEqualTo("userID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                            db.document("Check Ins/" + document.getId()).update("userName", displayName);
+                                                                        }
+
+                                                                        db.collection("Reviews").whereEqualTo("reviewerID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                        db.document("Reviews/" + document.getId()).update("reviewerName", displayName);
+                                                                                    }
+
+                                                                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                                                                    Intent intent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
+                                                                                    intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
+                                                                                    startActivity(intent);
+                                                                                    finish();
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                    }
+                                }
                             }
                         }
                     });
-                }
-
-                if (isValid()) {
-                    final ProgressDialog progressDialog = new ProgressDialog(ProfileEditActivity.this);
-
-                    db.document("Users/" + profileRefString)
-                            .update("displayName", displayName,
-                                    "username", userName)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        db.collection("Check Ins").whereEqualTo("userID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                        db.document("Check Ins/" + document.getId()).update("userName", displayName);
-                                                    }
-                                                }
-                                            }
-                                        });
-                                        db.collection("Reviews").whereEqualTo("reviewerID", profileRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                        db.document("Reviews/" + document.getId()).update("reviewerName", displayName);
-                                                    }
-                                                }
-                                            }
-                                        });
-
-                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                        Intent intent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
-                                        intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }
-                            });
-                }
-                else {
-                    Log.d(TAG, "onClick: User register failed.");
                 }
             }
         });
@@ -237,6 +275,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                                                 intent.putExtra(CredentialsEditActivity.EMAIL_KEY, email);
                                                 intent.putExtra(CredentialsEditActivity.PASSWORD_KEY, password);
                                                 startActivity(intent);
+                                                dialog.dismiss();
                                                 finish();
                                             }
                                         }

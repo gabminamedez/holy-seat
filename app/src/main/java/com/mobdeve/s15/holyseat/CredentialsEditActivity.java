@@ -89,63 +89,87 @@ public class CredentialsEditActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String email = editEmail.getText().toString().trim();
 
-                valid();
+                invalid();
                 if (email.isEmpty() || !isValidEmail(email)) {
                     errorEmail.setText(R.string.error_email);
                     errorEmail.setVisibility(View.VISIBLE);
-                    invalid();
                 }
                 else {
                     db.collection("Users").whereEqualTo("email", email).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    if (!document.getString("email").equals(curEmail)) {
-                                        errorEmail.setText(R.string.error_email_exist);
-                                        errorEmail.setVisibility(View.VISIBLE);
-                                        invalid();
-                                        break;
-                                    }
-                                    else {
-                                        errorEmail.setVisibility(View.GONE);
+                            if (task.isSuccessful()) {
+                                if (!task.getResult().isEmpty()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        if (document.getString("email").equals(curEmail)) {
+                                            errorEmail.setVisibility(View.GONE);
+                                            valid();
+                                            if (isValid()) {
+                                                AuthCredential credential = EmailAuthProvider.getCredential(curEmail, curPassword);
+                                                user.reauthenticate(credential)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                Log.d(TAG, "User re-authenticated.");
+                                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                                user.updateEmail(email)
+                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    Log.d(TAG, "User email address updated.");
+                                                                                    db.document("Users/" + profileRefString).update("email", email);
+                                                                                    Intent intent = new Intent(CredentialsEditActivity.this, ProfileActivity.class);
+                                                                                    intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
+                                                                                    startActivity(intent);
+                                                                                    finish();
+                                                                                }
+                                                                            }
+                                                                        });
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                        else {
+                                            errorEmail.setText(R.string.error_email_exist);
+                                            errorEmail.setVisibility(View.VISIBLE);
+                                            invalid();
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            else {
-                                errorEmail.setVisibility(View.GONE);
+                                else if (task.getResult().isEmpty()) {
+                                    errorEmail.setVisibility(View.GONE);
+                                    valid();
+                                    if (isValid()) {
+                                        AuthCredential credential = EmailAuthProvider.getCredential(curEmail, curPassword);
+                                        user.reauthenticate(credential)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        Log.d(TAG, "User re-authenticated.");
+                                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                        user.updateEmail(email)
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if (task.isSuccessful()) {
+                                                                            Log.d(TAG, "User email address updated.");
+                                                                            db.document("Users/" + profileRefString).update("email", email);
+                                                                            Intent intent = new Intent(CredentialsEditActivity.this, ProfileActivity.class);
+                                                                            intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
+                                                                            startActivity(intent);
+                                                                            finish();
+                                                                        }
+                                                                    }
+                                                                });
+                                                    }
+                                                });
+                                    }
+                                }
                             }
                         }
                     });
-                }
-
-                if (isValid()) {
-                    AuthCredential credential = EmailAuthProvider.getCredential(curEmail, curPassword);
-                    user.reauthenticate(credential)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    Log.d(TAG, "User re-authenticated.");
-                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                    user.updateEmail(email)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Log.d(TAG, "User email address updated.");
-                                                        db.document("Users/" + profileRefString).update("email", email);
-                                                        Intent intent = new Intent(CredentialsEditActivity.this, ProfileActivity.class);
-                                                        intent.putExtra(ProfileActivity.PROFILE_KEY, profileRefString);
-                                                        startActivity(intent);
-                                                        finish();
-                                                    }
-                                                }
-                                            });
-                                }
-                            });
-                }
-                else {
-                    Log.d(TAG, "onClick: User register failed.");
                 }
             }
         });
