@@ -62,6 +62,7 @@ public class ToiletActivity extends AppCompatActivity {
     private TextView toiletRating;
     private TextView toiletReviews;
     private TextView toiletCheckins;
+    private TextView toiletNone;
     private Button btnCheckIn;
     private Button btnAddReview;
     private RecyclerView recyclerReviews;
@@ -85,11 +86,12 @@ public class ToiletActivity extends AppCompatActivity {
         this.toiletRating = findViewById(R.id.toiletRating);
         this.toiletReviews = findViewById(R.id.toiletReviews);
         this.toiletCheckins = findViewById(R.id.toiletCheckins);
+        this.toiletNone = findViewById(R.id.toiletNone);
         this.btnCheckIn = findViewById(R.id.btnCheckIn);
         this.btnAddReview = findViewById(R.id.btnAddReview);
         this.recyclerReviews = findViewById(R.id.recyclerReviews);
 
-        this.reviewAdapter = new ReviewAdapter();
+        this.reviewAdapter = new ReviewAdapter(this);
         this.recyclerReviews.setAdapter(reviewAdapter);
         this.recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
 
@@ -327,9 +329,16 @@ public class ToiletActivity extends AppCompatActivity {
                         reviews.add(document.toObject(Review.class));
                         Log.d(TAG, document.getId() + " => " + document.getData());
                     }
+                    reviewAdapter = new ReviewAdapter(ToiletActivity.this);
                     reviewAdapter.setReviews(reviews);
                     reviewAdapter.sortReviews();
-                    reviewAdapter.notifyDataSetChanged();
+                    recyclerReviews.setAdapter(reviewAdapter);
+//                    reviewAdapter.notifyDataSetChanged();
+                    if (reviewAdapter.getItemCount() == 0){
+                        toiletNone.setVisibility(View.VISIBLE);
+                    }else{
+                        toiletNone.setVisibility(View.GONE);
+                    }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
