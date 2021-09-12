@@ -207,6 +207,28 @@ public class ReviewAddActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             DocumentReference toilet = documentSnapshot.getReference();
+                                            Double curAvg = documentSnapshot.getDouble("avgRating");
+                                            Double curNumReviews = documentSnapshot.getDouble("numReviews");
+                                            Double total = curAvg * curNumReviews;
+                                            total = total + rating;
+                                            Double newNumReviews = curNumReviews + 1;
+                                            Double result = total / newNumReviews;
+                                            result = (double) Math.round(result * 10d) / 10d;
+
+                                            toilet.update("avgRating", result)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Log.d(TAG, "numReviews incremented.");
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Log.w(TAG, "Error updating document", e);
+                                                        }
+                                                    });
+
                                             toilet.update("numReviews", FieldValue.increment(1))
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
@@ -220,6 +242,7 @@ public class ReviewAddActivity extends AppCompatActivity {
                                                             Log.w(TAG, "Error updating document", e);
                                                         }
                                                     });
+
                                             String toiletLocation = documentSnapshot.get("location").toString();
                                             Map<String, Object> newReview = new HashMap<>();
                                             newReview.put("rating", rating);
@@ -318,6 +341,27 @@ public class ReviewAddActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     DocumentReference toilet = documentSnapshot.getReference();
+                                    Double curAvg = documentSnapshot.getDouble("avgRating");
+                                    Double curNumReviews = documentSnapshot.getDouble("numReviews");
+                                    Double total = curAvg * curNumReviews;
+                                    total = total + rating;
+                                    Double newNumReviews = curNumReviews + 1;
+                                    Double result = total / newNumReviews;
+                                    result = (double) Math.round(result * 10d) / 10d;
+
+                                    toilet.update("avgRating", result)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d(TAG, "numReviews incremented.");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w(TAG, "Error updating document", e);
+                                                }
+                                            });
                                     toilet.update("numReviews", FieldValue.increment(1))
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
