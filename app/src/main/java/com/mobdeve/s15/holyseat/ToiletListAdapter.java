@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 public class ToiletListAdapter extends RecyclerView.Adapter<ToiletListAdapter.MyViewHolder> {
     private ArrayList<Toilet> toilets;
+    private
 
     StorageReference storage = FirebaseStorage.getInstance().getReference();
     public ToiletListAdapter() {

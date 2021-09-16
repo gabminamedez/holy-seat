@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -53,11 +55,13 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private SharedPreferences sp;
+    private String profileRefString;
 
-    public ReviewAdapter(Context context) {
+    public ReviewAdapter(Context context, String profileRefString) {
         this.reviews = new ArrayList<>();
         this.context = context;
-        this.sp = PreferenceManager.getDefaultSharedPreferences(context);;
+        this.sp = PreferenceManager.getDefaultSharedPreferences(context);
+        this.profileRefString = profileRefString;
     }
 
     @NonNull
@@ -76,15 +80,15 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull ReviewAdapter.MyViewHolder holder, int position) {
         holder.bind(reviews.get(position));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), ReviewActivity.class);
-                i.putExtra(ReviewActivity.REVIEW_KEY, reviews.get(holder.getBindingAdapterPosition()).getId());
-                i.putExtra(ToiletActivity.TOILET_KEY, reviews.get(holder.getBindingAdapterPosition()).getToiletID().getId());
-                v.getContext().startActivity(i);
-            }
-        });
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(v.getContext(), ReviewActivity.class);
+//                i.putExtra(ReviewActivity.REVIEW_KEY, reviews.get(holder.getBindingAdapterPosition()).getId());
+//                i.putExtra(ToiletActivity.TOILET_KEY, reviews.get(holder.getBindingAdapterPosition()).getToiletID().getId());
+//                v.getContext().startActivity(i);
+//            }
+//        });
     }
 
     @Override
@@ -97,6 +101,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
         private RatingBar toiletReviewRating;
         private ImageView toiletReviewImg;
         private ImageView toiletReviewUpvoted;
+        private Button editReviewBtn;
         public MyViewHolder(View itemView) {
             super(itemView);
             this.toiletReviewUser = itemView.findViewById(R.id.toiletReviewUser);
@@ -106,6 +111,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
             this.toiletReviewRating = itemView.findViewById(R.id.toiletReviewRating);
             this.toiletReviewImg = itemView.findViewById(R.id.toiletReviewImg);
             this.toiletReviewUpvoted = itemView.findViewById(R.id.toiletReviewUpvoted);
+            this.editReviewBtn = itemView.findViewById(R.id.editReviewBtn);
             toiletReviewUser.setOnClickListener(this);
         }
         public void bind(Review review) {
@@ -114,6 +120,57 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
             this.toiletReviewDetails.setText(review.getDetails());
             this.toiletReviewDate.setText(review.getPostedString());
             this.toiletReviewRating.setRating(review.getRating());
+
+            DocumentReference reviewRef = db.collection("Reviews").document(review.getId());
+            DocumentReference profileRef = db.collection("Users").document(sp.getString(ProfileActivity.PROFILE_KEY, ""));
+
+//            this.editReviewBtn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent i = new Intent(v.getContext(), ReviewActivity.class);
+//                    i.putExtra(ReviewActivity.REVIEW_KEY, review.getId());
+//                    i.putExtra(ToiletActivity.TOILET_KEY, reviews.get(this.getBindingAdapterPosition()).getToiletID().getId());
+//                    v.getContext().startActivity(i);
+//                }
+//            });
+            profileRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        if (review.getReviewerID().getId().equals(task.getResult().getId())) {
+                            editReviewBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            });
+
+            editReviewBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("YEET", "we here");
+                    db.collection("Reviews").whereEqualTo("reviewID", reviewRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    db.document(document.get("toiletID").toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+                                            if(task2.isSuccessful()) {
+                                                Intent i = new Intent(v.getContext(), ReviewActivity.class);
+                                                i.putExtra(ReviewActivity.REVIEW_KEY, review.getId());
+                                                i.putExtra(ToiletActivity.TOILET_KEY, task2.getResult().getId());
+                                                v.getContext().startActivity(i);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
             if (!review.getImageUri().isEmpty()){
                 String path = "review_images/" + review.getToiletID().getId() + "-" + Uri.parse(review.getImageUri()).getLastPathSegment();
                 storage.child(path).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -130,8 +187,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
             else{
                 toiletReviewImg.setVisibility(View.GONE);
             }
-            DocumentReference reviewRef = db.collection("Reviews").document(review.getId());
-            DocumentReference profileRef = db.collection("Users").document(sp.getString(ProfileActivity.PROFILE_KEY, ""));
+
             db.collection("Upvotes").whereEqualTo("reviewID", reviewRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {

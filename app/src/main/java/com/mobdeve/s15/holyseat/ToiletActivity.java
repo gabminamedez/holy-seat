@@ -53,6 +53,7 @@ public class ToiletActivity extends AppCompatActivity {
 
     public final String TAG = "ToiletActivity";
     public static String TOILET_KEY = "TOILET_KEY";
+    public static String PROFILE_KEY = "PROFILE_KEY";
 
     private ImageButton backButton;
     private ImageView toiletImg;
@@ -91,16 +92,17 @@ public class ToiletActivity extends AppCompatActivity {
         this.btnAddReview = findViewById(R.id.btnAddReview);
         this.recyclerReviews = findViewById(R.id.recyclerReviews);
 
-        this.reviewAdapter = new ReviewAdapter(this);
+        Intent i = getIntent();
+        String toiletRefString = i.getStringExtra(TOILET_KEY);
+        String profileRefString = i.getStringExtra(PROFILE_KEY);
+
+        this.reviewAdapter = new ReviewAdapter(this, profileRefString);
         this.recyclerReviews.setAdapter(reviewAdapter);
         this.recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
 
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance().getReference();
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Intent i = getIntent();
-        String toiletRefString = i.getStringExtra(TOILET_KEY);
 
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -329,7 +331,7 @@ public class ToiletActivity extends AppCompatActivity {
                         reviews.add(document.toObject(Review.class));
                         Log.d(TAG, document.getId() + " => " + document.getData());
                     }
-                    reviewAdapter = new ReviewAdapter(ToiletActivity.this);
+                    reviewAdapter = new ReviewAdapter(ToiletActivity.this, getIntent().getStringExtra(PROFILE_KEY));
                     reviewAdapter.setReviews(reviews);
                     reviewAdapter.sortReviews();
                     recyclerReviews.setAdapter(reviewAdapter);

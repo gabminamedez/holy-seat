@@ -504,6 +504,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                                                                                 public void onClick(View v) {
                                                                                                                     Intent intent = new Intent(MainActivity.this, ReviewAddActivity.class);
                                                                                                                     intent.putExtra(ToiletActivity.TOILET_KEY, checkInToiletId);
+                                                                                                                    intent.putExtra(ToiletActivity.PROFILE_KEY, profileRefString);
                                                                                                                     startActivity(intent);
                                                                                                                     dialog2.dismiss();
                                                                                                                 }
