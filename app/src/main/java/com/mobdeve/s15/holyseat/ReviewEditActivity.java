@@ -67,6 +67,7 @@ public class ReviewEditActivity extends AppCompatActivity {
 
     StorageReference storage = FirebaseStorage.getInstance().getReference();
 
+
     private ActivityResultLauncher<Intent> myActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -98,7 +99,7 @@ public class ReviewEditActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         String reviewRefString = i.getStringExtra(ReviewActivity.REVIEW_KEY);
-        String toiletRefString = i.getStringExtra("TOILET_KEY");
+        String toiletRefString = i.getStringExtra(ToiletActivity.TOILET_KEY);
 
         db.collection("Toilets").document(toiletRefString).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -116,6 +117,7 @@ public class ReviewEditActivity extends AppCompatActivity {
                 curRating = review.getRating();
                 editRating.setRating(review.getRating());
                 editReviewDetails.setText(review.getDetails());
+                imageUri = Uri.parse(review.getImageUri());
                 if (!review.getImageUri().isEmpty()){
                     String path = "review_images/" + review.getToiletID().getId() + "-" + Uri.parse(review.getImageUri()).getLastPathSegment();
                     storage.child(path).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -211,8 +213,7 @@ public class ReviewEditActivity extends AppCompatActivity {
                         newReview.put("imageUri", imageUri == null ? "" : imageUri.toString());
                         newReview.put("numUpvotes", 0);
                         newReview.put("posted", FieldValue.serverTimestamp());
-
-                        if (imageUri != null){
+                        if (imageUri != null && !imageUri.equals(Uri.EMPTY)){
                             StorageReference imageRef = FirebaseStorage.getInstance().getReference()
                                     .child("review_images/" + toiletRefString + "-" + imageUri.getLastPathSegment());
                             Task t1 = imageRef.putFile(imageUri)
