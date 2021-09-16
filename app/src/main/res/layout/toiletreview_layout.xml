@@ -78,6 +78,18 @@
         android:scaleType="fitXY"
         tools:srcCompat="@tools:sample/avatars" />
 
+    <Button
+        android:id="@+id/editReviewBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:backgroundTint="@color/cerulean"
+        android:fontFamily="@font/rambla_bold"
+        android:minWidth="60dip"
+        android:minHeight="30dip"
+        android:text="Edit Review"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/toiletReviewDate"
         android:layout_width="wrap_content"
