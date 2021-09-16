@@ -38,10 +38,15 @@
             android:secondaryProgressTint="@color/charcoal"
             android:stepSize="1" />
 
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
         <LinearLayout
+            android:id="@+id/toiletReviewUpvoteSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="right"
             android:orientation="horizontal">
 
@@ -78,17 +83,42 @@
         android:scaleType="fitXY"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <Button
-        android:id="@+id/editReviewBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:backgroundTint="@color/cerulean"
-        android:fontFamily="@font/rambla_bold"
-        android:minWidth="60dip"
-        android:minHeight="30dip"
-        android:text="Edit Review"
-        android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/editReviewBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:backgroundTint="@color/cerulean"
+            android:fontFamily="@font/rambla_bold"
+            android:minWidth="60dip"
+            android:minHeight="30dip"
+            android:text="@string/edit_review"
+            android:textAllCaps="false"
+            android:visibility="gone" />
+
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/deleteReviewBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:backgroundTint="@color/red"
+            android:fontFamily="@font/rambla_bold"
+            android:minWidth="60dip"
+            android:minHeight="30dip"
+            android:text="@string/delete_review"
+            android:textAllCaps="false"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/toiletReviewDate"
