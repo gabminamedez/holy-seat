@@ -83,38 +83,10 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/toiletMapCheckin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toiletMapDetails"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="@color/cerulean"
-        android:fontFamily="@font/rambla_bold"
-        android:minWidth="60dip"
-        android:minHeight="30dip"
-        android:text="@string/check_in_button"
-        android:textAllCaps="false"
-        android:textSize="14sp" />
-
-    <Button
-        android:id="@+id/toiletMapAddReview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toiletMapCheckin"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="@color/cerulean"
-        android:fontFamily="@font/rambla_bold"
-        android:minWidth="60dip"
-        android:minHeight="30dip"
-        android:text="@string/add_review_button"
-        android:textAllCaps="false"
-        android:textSize="14sp" />
-
-    <Button
         android:id="@+id/toiletMapToilet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/toiletMapAddReview"
+        android:layout_below="@id/toiletMapDetails"
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/cerulean"
         android:fontFamily="@font/rambla_bold"

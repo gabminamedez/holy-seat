@@ -426,8 +426,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                                     toiletMapType.setText(document.getString("toiletType"));
                                                                     RatingBar ratingBar = dialog.findViewById(R.id.toiletMapRating);
                                                                     ratingBar.setRating(document.getDouble("avgRating").floatValue());
-                                                                    Button toiletMapCheckin = dialog.findViewById(R.id.toiletMapCheckin);
-                                                                    Button toiletMapAddReview = dialog.findViewById(R.id.toiletMapAddReview);
                                                                     Button toiletMapToilet = dialog.findViewById(R.id.toiletMapToilet);
                                                                     ImageButton backMapButton = dialog.findViewById(R.id.backMapButton);
                                                                     ImageView toiletMapImg = dialog.findViewById(R.id.toiletMapImg);
@@ -447,114 +445,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                                         });
                                                                     }
 
-                                                                    String checkInToiletId = document.getId();
-                                                                    String checkInToiletName = document.getString("location");
-
                                                                     dialog.show();
 
                                                                     backMapButton.setOnClickListener(new View.OnClickListener() {
                                                                         @Override
                                                                         public void onClick(View v) {
                                                                             dialog.dismiss();
-                                                                        }
-                                                                    });
-                                                                    toiletMapCheckin.setOnClickListener(new View.OnClickListener() {
-                                                                        @Override
-                                                                        public void onClick(View v) {
-                                                                            dialog.dismiss();
-
-                                                                            DocumentReference profileRef = db.collection("Users").document(profileRefString);
-                                                                            profileRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                                @Override
-                                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                                    if (task.isSuccessful()) {
-                                                                                        DocumentSnapshot document = task.getResult();
-                                                                                        if (document.exists()) {
-                                                                                            User user = document.toObject(User.class);
-                                                                                            Map<String, Object> checkin = new HashMap<>();
-                                                                                            checkin.put("userID", db.document("Users/" + user.getId()));
-                                                                                            checkin.put("userName", user.getDisplayName());
-                                                                                            checkin.put("toiletID", db.document("Toilets/" + checkInToiletId));
-                                                                                            checkin.put("toiletLocation", checkInToiletName);
-                                                                                            checkin.put("checked", FieldValue.serverTimestamp());
-                                                                                            db.collection("Check Ins")
-                                                                                                    .add(checkin)
-                                                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                                                        @Override
-                                                                                                        public void onSuccess(DocumentReference documentReference) {
-                                                                                                            Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-
-                                                                                                            Dialog dialog2 = new Dialog(MainActivity.this);
-                                                                                                            dialog2.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                                                                                            dialog2.setCancelable(true);
-                                                                                                            dialog2.setContentView(R.layout.checkin_dialog);
-                                                                                                            dialog2.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                                                                                            Button btnCancel = dialog2.findViewById(R.id.btnCancel);
-                                                                                                            Button btnCheckInAddReview = dialog2.findViewById(R.id.btnCheckinAddReview);
-                                                                                                            dialog2.show();
-
-                                                                                                            btnCancel.setOnClickListener(new View.OnClickListener() {
-                                                                                                                @Override
-                                                                                                                public void onClick(View v) {
-                                                                                                                    dialog2.dismiss();
-                                                                                                                }
-                                                                                                            });
-                                                                                                            btnCheckInAddReview.setOnClickListener(new View.OnClickListener() {
-                                                                                                                @Override
-                                                                                                                public void onClick(View v) {
-                                                                                                                    Intent intent = new Intent(MainActivity.this, ReviewAddActivity.class);
-                                                                                                                    intent.putExtra(ToiletActivity.TOILET_KEY, checkInToiletId);
-                                                                                                                    intent.putExtra(ToiletActivity.PROFILE_KEY, profileRefString);
-                                                                                                                    startActivity(intent);
-                                                                                                                    dialog2.dismiss();
-                                                                                                                }
-                                                                                                            });
-                                                                                                        }
-                                                                                                    })
-                                                                                                    .addOnFailureListener(new OnFailureListener() {
-                                                                                                        @Override
-                                                                                                        public void onFailure(@NonNull Exception e) {
-                                                                                                            Log.w(TAG, "Error adding checkin", e);
-                                                                                                        }
-                                                                                                    });
-                                                                                            Log.d(TAG, "onComplete: done loading");
-                                                                                        } else {
-                                                                                            Log.d(TAG, "No such document");
-                                                                                        }
-                                                                                    } else {
-                                                                                        Log.d(TAG, "get failed with ", task.getException());
-                                                                                    }
-
-                                                                                    db.collection("Toilets").document(checkInToiletId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                                                        @Override
-                                                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                                                            DocumentReference toilet = documentSnapshot.getReference();
-                                                                                            toilet.update("numCheckins", FieldValue.increment(1))
-                                                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                        @Override
-                                                                                                        public void onSuccess(Void aVoid) {
-                                                                                                            Log.d(TAG, "numReviews incremented.");
-                                                                                                        }
-                                                                                                    })
-                                                                                                    .addOnFailureListener(new OnFailureListener() {
-                                                                                                        @Override
-                                                                                                        public void onFailure(@NonNull Exception e) {
-                                                                                                            Log.w(TAG, "Error updating document", e);
-                                                                                                        }
-                                                                                                    });
-                                                                                        }
-                                                                                    });
-                                                                                }
-                                                                            });
-                                                                        }
-                                                                    });
-                                                                    toiletMapAddReview.setOnClickListener(new View.OnClickListener() {
-                                                                        @Override
-                                                                        public void onClick(View v) {
-                                                                            dialog.dismiss();
-                                                                            Intent intent = new Intent(MainActivity.this, ReviewAddActivity.class);
-                                                                            intent.putExtra(ToiletActivity.TOILET_KEY, document.getId());
-                                                                            startActivity(intent);
                                                                         }
                                                                     });
                                                                     toiletMapToilet.setOnClickListener(new View.OnClickListener() {
