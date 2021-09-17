@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -16,12 +17,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -44,6 +49,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,6 +59,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -68,6 +75,7 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -372,12 +380,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                 globalStyle = style;
                                                 enableLocation(mapboxMap, style);
 
-                                                Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
-                                                CameraPosition cameraPosition = new CameraPosition.Builder()
-                                                        .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
-                                                        .zoom(12)
-                                                        .build();
-                                                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//                                                Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
+//                                                if (lastKnownLocation != null) {
+//                                                    CameraPosition cameraPosition = new CameraPosition.Builder()
+//                                                            .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+//                                                            .zoom(12)
+//                                                            .build();
+//                                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//                                                }
                                             }
                                     });
 
@@ -405,10 +415,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                     Double latUpper = coordinates.get(1) + marginOfError;
 
                                                     CollectionReference toiletsRef = db.collection("Toilets");
-                                                    toiletsRef.whereLessThanOrEqualTo("longitude", lngUpper).whereGreaterThanOrEqualTo("longitude", lngLower);
-                                                    toiletsRef.whereLessThanOrEqualTo("latitude", latUpper).whereGreaterThanOrEqualTo("latitude", latLower);
+                                                    Query query1 = toiletsRef.whereLessThanOrEqualTo("longitude", lngUpper).whereGreaterThanOrEqualTo("longitude", lngLower);
+                                                    Query query2 = toiletsRef.whereLessThanOrEqualTo("latitude", latUpper).whereGreaterThanOrEqualTo("latitude", latLower);
 
-                                                    toiletsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    query1.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                             if (task.isSuccessful()) {
@@ -502,11 +512,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @SuppressWarnings( {"MissingPermission"})
     public void enableLocation(MapboxMap mapboxMap, Style style) {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            LocationComponentOptions customLocationComponentOptions = LocationComponentOptions.builder(this)
+                    .trackingGesturesManagement(true)
+                    .accuracyColor(ContextCompat.getColor(this, R.color.cerulean))
+                    .build();
+
+            LocationComponentActivationOptions locationComponentActivationOptions = LocationComponentActivationOptions.builder(this, style)
+                    .locationComponentOptions(customLocationComponentOptions)
+                    .build();
+
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
-            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, style).build());
+            locationComponent.activateLocationComponent(locationComponentActivationOptions);
             locationComponent.setLocationComponentEnabled(true);
             locationComponent.setCameraMode(CameraMode.TRACKING);
             locationComponent.setRenderMode(RenderMode.COMPASS);
+
+            Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
+            if (lastKnownLocation != null) {
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+                        .zoom(12)
+                        .build();
+                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
         }
         else {
             permissionsManager = new PermissionsManager(this);
