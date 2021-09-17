@@ -133,7 +133,7 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
             MapboxMapOptions options = MapboxMapOptions.createFromAttributes(this, null);
             options.camera(new CameraPosition.Builder()
                     .target(new LatLng(14.594, 121.006))
-                    .zoom(12)
+                    .zoom(15)
                     .build());
 
             mapFragment = SupportMapFragment.newInstance(options);
@@ -160,26 +160,7 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
                                     Log.d(TAG, document.getId() + " => " + document.getData());
                                     double lng = (Double) document.get("longitude");
                                     double lat = (Double) document.get("latitude");
-                                    if(document.getDouble("avgRating") >= ratingFilter) {
-                                        if(roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
-                                            symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
-                                        }
-                                        else if(!roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
-                                            if(roomFilter.equals(document.get("roomType"))) {
-                                                symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
-                                            }
-                                        }
-                                        else if(roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
-                                            if(toiletFilter.equals(document.get("toiletType"))) {
-                                                symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
-                                            }
-                                        }
-                                        else if(!roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
-                                            if(roomFilter.equals(document.get("roomType")) && toiletFilter.equals(document.get("toiletType"))) {
-                                                symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
-                                            }
-                                        }
-                                    }
+                                    symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
                                 }
 
                                 Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_location_on_24, null);

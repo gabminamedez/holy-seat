@@ -303,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @SuppressWarnings( {"MissingPermission"})
     public void switchFragment(Bundle savedInstanceState) {
         if(isMapView) {
+            savedInstanceState = null;
             ((Switch) findViewById(R.id.fragmentSwitch)).setText("Map View");
             SupportMapFragment mapFragment;
             if(savedInstanceState == null) {
@@ -317,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mapFragment = SupportMapFragment.newInstance(options);
 
                 transaction.add(R.id.fragmentHolder, mapFragment, "com.mapbox.map");
+                transaction.replace(R.id.fragmentHolder, mapFragment, "com.mapbox.map");
                 transaction.commit();
             }
             else {
