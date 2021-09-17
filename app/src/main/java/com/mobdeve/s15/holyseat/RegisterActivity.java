@@ -3,6 +3,7 @@ package com.mobdeve.s15.holyseat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -94,11 +96,12 @@ public class RegisterActivity extends AppCompatActivity {
                 String userName = registerUsername.getText().toString().trim();
                 String password = registerPass.getText().toString().trim();
                 String confirmPass = registerConfirmPass.getText().toString().trim();
-//                Log.d(TAG, "onClick: " + email);
-//                Log.d(TAG, "onClick: " + displayName);
-//                Log.d(TAG, "onClick: " + userName);
-//                Log.d(TAG, "onClick: " + password);
-//                Log.d(TAG, "onClick: " + confirmPass);
+
+                final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this);
+                progressDialog.setMessage("Making a new account...");
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
+
                 valid();
                 if (email.isEmpty() || !isValidEmail(email)){
                     errorEmail.setText(R.string.error_email);
@@ -111,8 +114,6 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<SignInMethodQueryResult> task)
                         {
-                            Log.d(TAG, "onComplete: " + task.getResult().getSignInMethods());
-
                             if (task.isSuccessful() && !task.getResult().getSignInMethods().isEmpty()){
                                 errorEmail.setText(R.string.error_email_exist);
                                 errorEmail.setVisibility(View.VISIBLE);
@@ -178,6 +179,11 @@ public class RegisterActivity extends AppCompatActivity {
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
+
+                                                progressDialog.setCanceledOnTouchOutside(true);
+                                                progressDialog.setMessage("Success!");
+                                                progressDialog.dismiss();
+
                                                 Intent i = new Intent(RegisterActivity.this, MainActivity.class);
                                                 editor.putString(ProfileActivity.PROFILE_KEY, documentReference.getId());
                                                 editor.commit();
@@ -188,11 +194,15 @@ public class RegisterActivity extends AppCompatActivity {
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
+                                                progressDialog.dismiss();
+                                                Toast.makeText(RegisterActivity.this, "An internal error occurred.", Toast.LENGTH_LONG).show();
                                                 Log.w(TAG, "Error adding document", e);
                                             }
                                         });
                             }
                             else{
+                                progressDialog.dismiss();
+                                Toast.makeText(RegisterActivity.this, "An internal error occurred.", Toast.LENGTH_LONG).show();
                                 Log.d(TAG, "onComplete: User not registered.");
                             }
                         }
@@ -200,6 +210,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 }
                 else{
+                    progressDialog.dismiss();
                     Log.d(TAG, "onClick: User register failed.");
                 }
 

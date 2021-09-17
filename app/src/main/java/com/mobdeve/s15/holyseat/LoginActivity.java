@@ -3,6 +3,7 @@ package com.mobdeve.s15.holyseat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -78,14 +80,18 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 email = loginEmail.getText().toString().trim();
                 String password = loginPassword.getText().toString().trim();
-                Log.d(TAG, "onClick: " + email);
-                Log.d(TAG, "onClick: " + password);
 
                 if (email.isEmpty() || password.isEmpty()){
                     errorLogin.setVisibility(View.VISIBLE);
                 }
                 else{
                     if (!isValidEmail(email)){
+
+                        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
+                        progressDialog.setMessage("Logging in...");
+                        progressDialog.setCanceledOnTouchOutside(false);
+                        progressDialog.show();
+
                         db.collection("Users").whereEqualTo("username", email).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -99,6 +105,11 @@ public class LoginActivity extends AppCompatActivity {
                                             mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                                 @Override
                                                 public void onSuccess(AuthResult authResult) {
+
+                                                    progressDialog.setCanceledOnTouchOutside(true);
+                                                    progressDialog.setMessage("Success!");
+                                                    progressDialog.dismiss();
+
                                                     Intent i = new Intent(LoginActivity.this, MainActivity.class);
                                                     editor.putString(ProfileActivity.PROFILE_KEY, document.getId());
                                                     editor.commit();
@@ -109,18 +120,27 @@ public class LoginActivity extends AppCompatActivity {
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
+                                                    progressDialog.dismiss();
+
                                                     errorLogin.setVisibility(View.VISIBLE);
                                                 }
                                             });
                                         }
                                     }
                                 } else {
+                                    progressDialog.dismiss();
                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                 }
                             }
                         });
                     }
                     else{
+
+                        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
+                        progressDialog.setMessage("Logging in...");
+                        progressDialog.setCanceledOnTouchOutside(false);
+                        progressDialog.show();
+
                         mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
@@ -131,6 +151,11 @@ public class LoginActivity extends AppCompatActivity {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
+
+                                                    progressDialog.setCanceledOnTouchOutside(true);
+                                                    progressDialog.setMessage("Success!");
+                                                    progressDialog.dismiss();
+
                                                     Intent i = new Intent(LoginActivity.this, MainActivity.class);
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                                         editor.putString(ProfileActivity.PROFILE_KEY, document.getId());
@@ -138,17 +163,19 @@ public class LoginActivity extends AppCompatActivity {
                                                     editor.commit();
                                                     startActivity(i);
                                                     finish();
-                                                    Log.d(TAG, "onComplete: User found");
                                                 } else {
+                                                    progressDialog.dismiss();
+                                                    Toast.makeText(LoginActivity.this, "An internal error occurred.", Toast.LENGTH_LONG).show();
                                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                                 }
                                             }
                                         });
-                                Log.d(TAG, "onSuccess: User authenticated");
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+
                                 errorLogin.setVisibility(View.VISIBLE);
                             }
                         });
