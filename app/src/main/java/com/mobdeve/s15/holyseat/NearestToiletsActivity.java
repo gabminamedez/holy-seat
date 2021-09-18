@@ -7,11 +7,13 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
@@ -31,6 +33,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,6 +48,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -56,6 +64,7 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -88,6 +97,8 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
     private PermissionsManager permissionsManager;
     private MapboxMap globalMap;
     private Style globalStyle;
+    private LocationRequest locationRequest;
+    private static final int REQUEST_CHECK_SETTINGS = 1001;
     private SupportMapFragment mapFragment;
 
     private ImageButton backButton;
@@ -130,7 +141,7 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
             MapboxMapOptions options = MapboxMapOptions.createFromAttributes(this, null);
             options.camera(new CameraPosition.Builder()
                     .target(new LatLng(14.594, 121.006))
-                    .zoom(12)
+                    .zoom(15)
                     .build());
 
             mapFragment = SupportMapFragment.newInstance(options);
@@ -157,26 +168,7 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
                                     Log.d(TAG, document.getId() + " => " + document.getData());
                                     double lng = (Double) document.get("longitude");
                                     double lat = (Double) document.get("latitude");
-                                    if(document.getDouble("avgRating") >= ratingFilter) {
-                                        if(roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
-                                            symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
-                                        }
-                                        else if(!roomFilter.equals("All Rooms") && toiletFilter.equals("All Toilets")) {
-                                            if(roomFilter.equals(document.get("roomType"))) {
-                                                symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
-                                            }
-                                        }
-                                        else if(roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
-                                            if(toiletFilter.equals(document.get("toiletType"))) {
-                                                symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
-                                            }
-                                        }
-                                        else if(!roomFilter.equals("All Rooms") && !toiletFilter.equals("All Toilets")) {
-                                            if(roomFilter.equals(document.get("roomType")) && toiletFilter.equals(document.get("toiletType"))) {
-                                                symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
-                                            }
-                                        }
-                                    }
+                                    symbolLayerIconFeatureList.add(Feature.fromGeometry(Point.fromLngLat(lng, lat)));
                                 }
 
                                 Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_baseline_location_on_24, null);
@@ -196,16 +188,34 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
                                     @Override
                                     public void onStyleLoaded(@NonNull Style style) {
                                         globalStyle = style;
-                                        enableLocation(mapboxMap, style);
 
-                                        Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
-                                        CameraPosition cameraPosition = new CameraPosition.Builder()
-                                                .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
-                                                .zoom(15)
-                                                .build();
-                                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                                        mapboxMap.getUiSettings().setZoomGesturesEnabled(false);
-                                        mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
+                                        locationRequest = LocationRequest.create();
+                                        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                                        locationRequest.setInterval(5000);
+                                        locationRequest.setFastestInterval(2000);
+
+                                        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+                                        builder.setAlwaysShow(true);
+
+                                        LocationServices
+                                                .getSettingsClient(NearestToiletsActivity.this)
+                                                .checkLocationSettings(builder.build())
+                                                .addOnSuccessListener(NearestToiletsActivity.this, (LocationSettingsResponse response) -> {
+                                                    enableLocation(mapboxMap, style);
+                                                })
+                                                .addOnFailureListener(NearestToiletsActivity.this, new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        if (e instanceof ResolvableApiException) {
+                                                            try {
+                                                                ResolvableApiException resolvable = (ResolvableApiException) e;
+                                                                resolvable.startResolutionForResult(NearestToiletsActivity.this,
+                                                                        REQUEST_CHECK_SETTINGS);
+                                                            } catch (IntentSender.SendIntentException sendEx) {
+                                                            }
+                                                        }
+                                                    }
+                                                });
                                     }
                                 });
 
@@ -233,15 +243,15 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
                                                 Double latUpper = coordinates.get(1) + marginOfError;
 
                                                 CollectionReference toiletsRef = db.collection("Toilets");
-                                                toiletsRef.whereLessThanOrEqualTo("longitude", lngUpper).whereGreaterThanOrEqualTo("longitude", lngLower);
-                                                toiletsRef.whereLessThanOrEqualTo("latitude", latUpper).whereGreaterThanOrEqualTo("latitude", latLower);
+                                                Query query1 = toiletsRef.whereLessThanOrEqualTo("longitude", lngUpper).whereGreaterThanOrEqualTo("longitude", lngLower);
+                                                Query query2 = toiletsRef.whereLessThanOrEqualTo("latitude", latUpper).whereGreaterThanOrEqualTo("latitude", latLower);
 
-                                                toiletsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                query1.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                         if (task.isSuccessful()) {
                                                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                Dialog dialog = new Dialog(com.mobdeve.s15.holyseat.NearestToiletsActivity.this);
+                                                                Dialog dialog = new Dialog(NearestToiletsActivity.this);
                                                                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                                                 dialog.setCancelable(true);
                                                                 dialog.setContentView(R.layout.toilet_map_detail_dialog);
@@ -321,11 +331,35 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
     @SuppressWarnings( {"MissingPermission"})
     public void enableLocation(MapboxMap mapboxMap, Style style) {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
+            LocationComponentOptions customLocationComponentOptions = LocationComponentOptions.builder(this)
+                    .trackingGesturesManagement(true)
+                    .accuracyColor(ContextCompat.getColor(this, R.color.cerulean))
+                    .build();
+
+            LocationComponentActivationOptions locationComponentActivationOptions = LocationComponentActivationOptions.builder(this, style)
+                    .locationComponentOptions(customLocationComponentOptions)
+                    .build();
+
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
-            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, style).build());
+            locationComponent.activateLocationComponent(locationComponentActivationOptions);
             locationComponent.setLocationComponentEnabled(true);
             locationComponent.setCameraMode(CameraMode.TRACKING);
             locationComponent.setRenderMode(RenderMode.COMPASS);
+
+            LocationServices.getFusedLocationProviderClient(getApplicationContext()).getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location lastKnownLocation) {
+                    if (lastKnownLocation != null) {
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+                                .zoom(15)
+                                .build();
+                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        mapboxMap.getUiSettings().setZoomGesturesEnabled(false);
+                        mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
+                    }
+                }
+            });
         }
         else {
             permissionsManager = new PermissionsManager(this);
