@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
@@ -32,6 +33,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -91,6 +97,8 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
     private PermissionsManager permissionsManager;
     private MapboxMap globalMap;
     private Style globalStyle;
+    private LocationRequest locationRequest;
+    private static final int REQUEST_CHECK_SETTINGS = 1001;
     private SupportMapFragment mapFragment;
 
     private ImageButton backButton;
@@ -180,7 +188,34 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
                                     @Override
                                     public void onStyleLoaded(@NonNull Style style) {
                                         globalStyle = style;
-                                        enableLocation(mapboxMap, style);
+
+                                        locationRequest = LocationRequest.create();
+                                        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                                        locationRequest.setInterval(5000);
+                                        locationRequest.setFastestInterval(2000);
+
+                                        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+                                        builder.setAlwaysShow(true);
+
+                                        LocationServices
+                                                .getSettingsClient(NearestToiletsActivity.this)
+                                                .checkLocationSettings(builder.build())
+                                                .addOnSuccessListener(NearestToiletsActivity.this, (LocationSettingsResponse response) -> {
+                                                    enableLocation(mapboxMap, style);
+                                                })
+                                                .addOnFailureListener(NearestToiletsActivity.this, new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        if (e instanceof ResolvableApiException) {
+                                                            try {
+                                                                ResolvableApiException resolvable = (ResolvableApiException) e;
+                                                                resolvable.startResolutionForResult(NearestToiletsActivity.this,
+                                                                        REQUEST_CHECK_SETTINGS);
+                                                            } catch (IntentSender.SendIntentException sendEx) {
+                                                            }
+                                                        }
+                                                    }
+                                                });
                                     }
                                 });
 
@@ -311,16 +346,20 @@ public class NearestToiletsActivity extends AppCompatActivity implements OnMapRe
             locationComponent.setCameraMode(CameraMode.TRACKING);
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
-            Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
-            if (lastKnownLocation != null) {
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
-                        .zoom(15)
-                        .build();
-                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                mapboxMap.getUiSettings().setZoomGesturesEnabled(false);
-                mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
-            }
+            LocationServices.getFusedLocationProviderClient(getApplicationContext()).getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location lastKnownLocation) {
+                    if (lastKnownLocation != null) {
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+                                .zoom(15)
+                                .build();
+                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        mapboxMap.getUiSettings().setZoomGesturesEnabled(false);
+                        mapboxMap.getUiSettings().setScrollGesturesEnabled(false);
+                    }
+                }
+            });
         }
         else {
             permissionsManager = new PermissionsManager(this);
