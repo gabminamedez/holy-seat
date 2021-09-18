@@ -6,6 +6,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
@@ -45,6 +47,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -115,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private PermissionsManager permissionsManager;
     private MapboxMap globalMap;
     private Style globalStyle;
+    private LocationRequest locationRequest;
+    private static final int REQUEST_CHECK_SETTINGS = 1001;
 
     private String roomFilter = "All Rooms";
     private String toiletFilter = "All Toilets";
@@ -137,6 +151,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mAuth = FirebaseAuth.getInstance();
         this.sp = PreferenceManager.getDefaultSharedPreferences(this);
         this.editor = sp.edit();
+
+        if (savedInstanceState != null){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         profileRefString = sp.getString(ProfileActivity.PROFILE_KEY, "");
         if (mAuth.getCurrentUser() == null){
@@ -165,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     });
             Log.d(TAG, "onCreate: MAY USER " + mAuth.getCurrentUser().toString());
         }
-        
+
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         setContentView(R.layout.activity_main);
 
@@ -380,16 +400,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             @Override
                                             public void onStyleLoaded(@NonNull Style style) {
                                                 globalStyle = style;
-                                                enableLocation(mapboxMap, style);
 
-//                                                Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
-//                                                if (lastKnownLocation != null) {
-//                                                    CameraPosition cameraPosition = new CameraPosition.Builder()
-//                                                            .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
-//                                                            .zoom(12)
-//                                                            .build();
-//                                                    mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-//                                                }
+                                                locationRequest = LocationRequest.create();
+                                                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                                                locationRequest.setInterval(5000);
+                                                locationRequest.setFastestInterval(2000);
+
+                                                LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+                                                builder.setAlwaysShow(true);
+
+                                                LocationServices
+                                                        .getSettingsClient(MainActivity.this)
+                                                        .checkLocationSettings(builder.build())
+                                                        .addOnSuccessListener(MainActivity.this, (LocationSettingsResponse response) -> {
+                                                            enableLocation(mapboxMap, style);
+                                                        })
+                                                        .addOnFailureListener(MainActivity.this, new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                if (e instanceof ResolvableApiException) {
+                                                                    try {
+                                                                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                                                                        resolvable.startResolutionForResult(MainActivity.this,
+                                                                                REQUEST_CHECK_SETTINGS);
+                                                                    } catch (IntentSender.SendIntentException sendEx) {
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
                                             }
                                     });
 
@@ -511,6 +549,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CHECK_SETTINGS) {
+
+            switch (resultCode) {
+                case MainActivity.RESULT_OK:
+                    enableLocation(globalMap, globalStyle);
+                    break;
+
+                case MainActivity.RESULT_CANCELED:
+                    Toast.makeText(this, "GPS is required to check your location.", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    }
+
     @SuppressWarnings( {"MissingPermission"})
     public void enableLocation(MapboxMap mapboxMap, Style style) {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
@@ -529,14 +585,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             locationComponent.setCameraMode(CameraMode.TRACKING);
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
-            Location lastKnownLocation = mapboxMap.getLocationComponent().getLastKnownLocation();
-            if (lastKnownLocation != null) {
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
-                        .zoom(12)
-                        .build();
-                mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
+            LocationServices.getFusedLocationProviderClient(getApplicationContext()).getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location lastKnownLocation) {
+                    if (lastKnownLocation != null) {
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+                                .zoom(12)
+                                .build();
+                        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    }
+                }
+            });
         }
         else {
             permissionsManager = new PermissionsManager(this);
