@@ -247,6 +247,18 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.MyViewHold
                                     ReviewAdapter.this.notifyDataSetChanged();
                                 }
                             });
+                            db.collection("Upvotes").whereEqualTo("reviewID", reviewRef).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (DocumentSnapshot document : task.getResult()) {
+                                            db.collection("Upvotes").document(document.getId()).delete();
+                                        }
+                                    } else {
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+                                }
+                            });
                         }
                     });
 
