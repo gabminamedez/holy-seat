@@ -52,6 +52,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private TextView errorName;
     private TextView errorUser;
     private boolean valid;
+    private boolean valid2;
 
     private FirebaseFirestore db;
     private FirebaseUser user;
@@ -114,10 +115,12 @@ public class ProfileEditActivity extends AppCompatActivity {
 
                 if (displayName.isEmpty() || !isValidDisplay(displayName)) {
                     errorName.setVisibility(View.VISIBLE);
+                    valid2 = false;
                 }
                 else {
                     errorName.setVisibility(View.GONE);
                     valid();
+                    valid2 = true;
                 }
 
                 if (userName.isEmpty() || userName.length() < 6 || !isValidUser(userName)){
@@ -329,7 +332,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         valid = true;
     }
     public boolean isValid(){
-        return valid;
+        return valid && valid2;
     }
 
 }
