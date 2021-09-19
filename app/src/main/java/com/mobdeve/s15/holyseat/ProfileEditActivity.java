@@ -273,6 +273,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
+                                                errorCred.setVisibility(View.GONE);
                                                 Intent intent = new Intent(ProfileEditActivity.this, CredentialsEditActivity.class);
                                                 intent.putExtra(CredentialsEditActivity.PROFILE_KEY, profileRefString);
                                                 intent.putExtra(CredentialsEditActivity.EMAIL_KEY, email);
